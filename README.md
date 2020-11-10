@@ -11,7 +11,7 @@ Tzor is a Mathematicia Package for  QCD Sum rules
 #### a quikly start
 
 [a manual for tzor](/tzor/main.pdf)
-[some usingful samples]
+[some usingful samples]()
 <<<<<<< HEAD
 ## Connect me
 =======
