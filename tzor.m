@@ -1,91 +1,88 @@
 (* ::Package:: *)
 
-(* Author: poplar *)
-(* Date: 19.3.12 *)
-(* Version: alpha *) 
+BeginPackage["Tzor`"];
 
 
-BeginPackage["SumRules`"]
 CurrentValue[$FrontEndSession, {CommonDefaultFormatTypes, "Output"}] = TraditionalForm
-Print["SumRules of QCD"]
+Print[" Tzor for "]
+Print[" SumRules of QCD"]
 Print[" Author: poplar "]
 Print[" Version: alpha "]
+Print["Lastest Veresion : This Version"]
 
-(* \:9884\:52a0\:8f7d *)
+
+$IndicesLists = {li,ci}
+$MatrixAndTensorLists = {eps,delta,lambda,sigma,slash}
+$SpinAndColor = {spin, color, unspin, uncolor, posandflovor,lorenz}
+$SpinSpace = {fourVector,gamma,metric}
 
 
-(*\:8bbe\:7f6e\:8f93\:51fa\:6837\:5f0f*)
+QField::usage = "QuarkQField[f,a,\[Alpha],x] is a flavor f quark filed at postion x with color a and Lonrtez index \[Alpha]";
+QFieldB::usage= "QuarkQQFieldB[f,a,\[Alpha],x] is a flavor f anti quark filed at postion x with color a and Lonrtez index \[Alpha]";
+GField::usage = "GluonQField[n,li[{\[Mu],\[Nu]}],x]is a gluon tensor QField at postion x with color n, \[Mu] and \[Nu] are Lonrtez indices";
+DE::usage = "DE is a quark progrator";
+GE::usage = "GE is a gluon progrator";
+Track::usage = "Track is trace of matrices";
+CJM::usage = "CJM is charge conjugation matrix";
+Trans::usage = "Trans is Transpose of something";
+bar::usage = "bar is anti-particle of one particle";
+wickContract::usage = "wickContract will give a Wick Contract of some operation"
+traceContract::usage = "traceContract will give a dot time of matrices"
+feynCalc::usage = "give leagal Feynmman diagram of kth dimenson"
+NColorFactors::usage = "caculate the value of color factors"
+indexNew::usage = "indexNew will give you a new variable never apear before. And Options EndQ means that variable never apeared agin"
+replace::usage = "replace Wick contract by diffrent progrator in diffrent postion"
+operators::usage = "give vacuum condesion of diffrent experssion"
+Einsum::usage = "caclulate the value by Einstein summation convention"
+ToTeXForm::usage = "LatexForm of experssion"
+fourierTransform::usage = "caclulate the Fourier transform from x-space to p-sapce"
+borelTransform::usage="cacluate the Borel transform form q to M"
+gs::usage="strong coupling"
+factors
 
-(*\:5938\:514b\:7684\:6837\:5f0f*)
-Format[Field[u_, a_, \[Alpha]_, x_], TraditionalForm] := 
- DisplayForm[RowBox[{SubsuperscriptBox[u, \[Alpha], a], "(", x, ")"}]]
 
-Format[FieldB[u_, a_, \[Alpha]_, x_], TraditionalForm] := 
- DisplayForm[
-  RowBox[{SubsuperscriptBox[OverBar[u], \[Alpha], a], "(", x, ")"}]]
-  
-(*\:4f20\:64ad\:5b50\:7684\:6837\:5f0f*)
-Format[DE[{ferm_, ferm_}, {x_ , y_} ] [CI[ {ci1_, ci2_}],SI[ {si1_, si2_}]], 
-  TraditionalForm] := 
- DisplayForm[
-  RowBox[{SubsuperscriptBox[S, RowBox[{si1, si2}], 
-     RowBox[{ferm, ",", RowBox[{ci1, ci2}]}]], "(",y-x, ")"}]]
+Begin["`Private`"];
 
-Format[DEInverse[{ferm_, ferm_}, {x_ , y_} ] [CI[ {ci1_, ci2_}],SI[ {si1_, si2_}]], 
-  TraditionalForm] := 
- DisplayForm[
-  RowBox[{SubsuperscriptBox[S, RowBox[{si1, si2}], 
-     RowBox[{"-1",ferm, ",", RowBox[{ci1, ci2}]}]], "(", y-x, ")"}]]
 
-Format[DE[{ferm_, ferm_}, {x_ , y_} ], 
-  TraditionalForm] := 
- DisplayForm[
-  RowBox[{SuperscriptBox[S,  
-     ferm], "(", y-x, ")"}]]
- 
-Format[DE[{ferm_, ferm_}, {x_ , y_} ] [CI[ {ci1_, ci2_}]],
-  TraditionalForm] := 
- DisplayForm[
-  RowBox[{SubsuperscriptBox[S, ferm, 
-      RowBox[{ci1, ci2}]], "(",y-x, ")"}]]
+Format[QField[u_, a_, \[Alpha]_, x_], TraditionalForm] := DisplayForm[RowBox[{SubsuperscriptBox[u, \[Alpha], a], "(", x, ")"}]]
+Format[QFieldB[u_, a_, \[Alpha]_, x_], TraditionalForm] := DisplayForm[RowBox[{SubsuperscriptBox[OverBar[u], \[Alpha], a], "(", x, ")"}]] 
+Format[GField[n_,x_],TraditionalForm]:= DisplayForm[RowBox[{SuperscriptBox["G", n], "(", x, ")"}]]
+Format[gs,TraditionalForm]:= DisplayForm[SubscriptBox["g", "s"]]
+Format[GField[n_,x_][li[{\[Mu]_,\[Nu]_}]],TraditionalForm]:=DisplayForm[RowBox[{SubsuperscriptBox["G",RowBox[{\[Mu],\[Nu]}],n], "(", x, ")"}]]
+Format[GField[n_][li[{\[Mu]_,\[Nu]_}]],TraditionalForm]:=DisplayForm[SubsuperscriptBox["G",RowBox[{\[Mu],\[Nu]}],n]]
+Format[DE[{ferm_, ferm_}, {x_ , y_}], TraditionalForm] := DisplayForm[RowBox[{SuperscriptBox["S",ferm], "(", y-x, ")"}]]
+Format[DE[{ferm_,ferm_},{x_,y_}][li[{\[Mu]_,\[Nu]_}]],TraditionalForm]:=DisplayForm[RowBox[{SubsuperscriptBox["S",RowBox[{\[Mu],\[Nu]}],ferm], "(", y-x, ")"}]]
+Format[DE[{ferm_,ferm_},{x_,y_}][ci[{\[Mu]_,\[Nu]_}]],TraditionalForm]:=DisplayForm[RowBox[{SubsuperscriptBox["S",RowBox[{\[Mu],\[Nu]}],ferm], "(", y-x, ")"}]]
+Format[DE[{ferm_,ferm_},{x_,y_}][ci[{a_,b_}],li[{\[Mu]_,\[Nu]_}]],TraditionalForm]:= DisplayForm[RowBox[{SubsuperscriptBox["S", RowBox[{\[Mu], \[Nu]}], RowBox[{ferm, ",", RowBox[{a, b}]}]], "(",y-x, ")"}]]
+Format[GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]],TraditionalForm]:= DisplayForm[RowBox[{"\[LeftAngleBracket]",SubsuperscriptBox["G",RowBox[{\[Mu]1,\[Nu]1}],n1],"(", x, ")",SubsuperscriptBox["G",RowBox[{\[Mu]2,\[Nu]2}],n2],"(", y, ")", "\[RightAngleBracket]"}]]
+SetAttributes[GE,Orderless]
+
+
 (*\:77e9\:9635\:7684\:6837\:5f0f*)
-MakeBoxes[(h_)[SI[{a_, b_}]], TraditionalForm] := 
+MakeBoxes[(h_)[li[{a_, b_}]], TraditionalForm] := 
  SubscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], "", ToString[b]}]]
 
-MakeBoxes[(h_)[CI[{a_, b_}]], TraditionalForm] := 
+MakeBoxes[(h_)[ci[{a_, b_}]], TraditionalForm] := 
  SuperscriptBox[ToBoxes[h,TraditionalForm], RowBox[{ToString[a], "", ToString[b]}]]
- 
+
+
+
 (*epsilon\:4e0edelta\:7684\:6837\:5f0f*)
-Format[DD[a_, b_], TraditionalForm] := 
- DisplayForm[SubscriptBox["\[Delta]", RowBox[{a, b}]]]
 Format[eps[a_, b_, c_], TraditionalForm] := 
- DisplayForm[SuperscriptBox[\[Epsilon], RowBox[{a, b, c}]]]
+ DisplayForm[SuperscriptBox["\[Epsilon]", RowBox[{a, b, c}]]]
 Format[delta[a_, b_], TraditionalForm] := 
- DisplayForm[SuperscriptBox[\[Delta], RowBox[{a, b}]]]
+ DisplayForm[SuperscriptBox["\[Delta]", RowBox[{a, b}]]]
  Format[lambda[a_,b_,n_],TraditionalForm]:=
- DisplayForm[Subsuperscript[\[Lambda], RowBox[{a,b}],RowBox[{n}]]]
+ DisplayForm[Subsuperscript["\[Lambda]", RowBox[{a,b}],RowBox[{n}]]]
 Format[sigma[a_,b_],TraditionalForm]:=
- DisplayForm[SuperscriptBox[\[Sigma], RowBox[{a, b}]]]
+ DisplayForm[SuperscriptBox["\[Sigma]", RowBox[{a, b}]]]
 Format[slash[a_],TraditionalForm]:=
  DisplayForm[OverHat[a]]
 
 
-SetAttributes[NM, {OneIdentity, Flat}]
-NM[a___, -c__, b___] := -NM[a, c, b]
-NM[a___, -1, b___] := -NM[a, b]
-
-
-(*\:5224\:65ad\:5938\:514b\:4e0e\:6807\:91cf*)
-scalarQ[expr_]:=Head[expr]=!=(Field\[Or]FieldB);
-quarkQ[expr_]:= (Head[expr] === Field) || (Head[expr] === FieldB);
-ProgQ[pro_]:= Head[Head[pro]]===DE;
-SetAttributes[ProgQ,Listable]
-
-
-Format[Track[func__], 
+Format[Track[func_], 
   TraditionalForm] := 
- DisplayForm[
-tr[func]]
+ DisplayForm[RowBox[{"tr(",func,")"}]]
 Format[CJM,TraditionalForm]:= DisplayForm[
   Style["C",Italic]]
 Format[Trans[p_],TraditionalForm]:= DisplayForm[
@@ -93,85 +90,117 @@ Format[Trans[p_],TraditionalForm]:= DisplayForm[
 Format[bar[q_],TraditionalForm]:=DisplayForm[OverscriptBox[q,"_"]]
 
 
-Unprotect[Dot];
-Dot[s___,a_ b_,c___]:=a Dot[s,b,c];
-Dot[s___,1,c___]:= Dot[s,c];
-Protect[Dot];
-Track[a___,b_?NumberQ c_,d___]:=b Track[a,c,d];
+slash[-a_]:=-slash[a]
+Protect[QField,QFieldB,GField,DE]
+Protect[li,ci]
+Protect[eps,delta,lambda,sigma,slash]
+
+
+NM[a___, -c__, b___] := -NM[a, c, b]
+NM[a___, -1, b___] := -NM[a, b]
+SetAttributes[NM,{OneIdentity,Flat}]
+
+
+Track[a___,b_?NumericQ c_,d___]:=b Track[a,c,d];
+Track[a___,b_?NumericQ,d___]:=b Track[a,d];
+CQ[expr_]:=(Head[expr]=!=gamma)\[And](Head[expr]=!=sigma)\[And](Head[expr]=!=slash);
+CQ[Trans[expr_]]:=CQ[expr]
+CQ[CJM]:= False;
+CQ[a_ b_]:=CQ[a]\[And]CQ[b];
+CQ[a_+b_]:=CQ[a]\[And]CQ[b];
+CQ[a_ .b_]:=CQ[a]\[And]CQ[b];
 Trans[Trans[a_]]:= a
+Trans[a_+b_]:= Trans[a]+Trans[b]
+Trans[a_?(!CQ[#]&) b_]:=b Trans[a]
+Trans[1]:= 1
+Track[a_?CQ b_]:= a Track[b]
 
 
-(*\:7ef4\:514b\:6536\:7f29*)
+scalarQ[expr_]:=Head[expr]=!=(QField\[Or]QFieldB);
+quarkQ[expr_]:= (Head[expr] === QField) || (Head[expr] === QFieldB);
+gluonQ[expr_ ]:=Head[Head[expr]]===GField;
+qorgQ[expr_]:= quarkQ[expr]||gluonQ[expr];
+ProgQ[pro_]:= Head[Head[pro]]===DE;
+SetAttributes[ProgQ,Listable]
+
+
+
+
+
 tempContract[]:= 1
 tempT[]:= 1
-sign[exp1_ , exp2_]:= Flatten[Position[exp1,#]&/@exp2]; 
+lign[exp1_ , exp2_]:= Flatten[Position[exp1,#]&/@exp2]; 
 wickContract[expr_] := 
- Block[{res}, res = expr /. NonCommutativeMultiply -> NM;
-  NM[NM@@(DeleteCases[res, _?quarkQ, \[Infinity]]), 
-    tempContract[Cases[res, _?quarkQ, \[Infinity]]]]/.NM->Times];
-tempContract[cur_]:= Module[{exp =cur,curent= 0, quarks = Select[cur,Head[#]==Field&],qbars = Select[cur,Head[#]==FieldB&],erros = 1,erromassages = {},res = 0},
+ Block[{res}, res = expr/. NonCommutativeMultiply -> NM;
+NM[NM@@(DeleteCases[res, _?qorgQ, \[Infinity]]), 
+    tempContract[Cases[res, _?qorgQ, \[Infinity]]]]/.NM->Times];
+tempContract[cur_]:= Module[{exp =cur,qcurent= 0,gcurent =0, quarks = Select[cur,Head[#]==QField&],qbars = Select[cur,Head[#]==QFieldB&],gluons = Select[cur,gluonQ],
+erros = 1,erromassages = {},qtemps = 0,gtemps = 0,res = 0},
 erromassages = {"\:8ba1\:7b97\:6210\:529f","\:6b63\:53cd\:5938\:514b\:6570\:76ee\:4e0d\:4e00\:81f4\:ff0c\:8bf7\:68c0\:67e5\:6d41\:5f62\:5f0f","\:5176\:4ed6\:9519\:8bef"};
 If[Length[quarks]!= Length[qbars],erros =2];
-curent = Riffle[quarks,#]&/@Permutations[qbars];
-Plus@@(Signature@sign[exp,#]*tempT@@#&/@curent//.tempT[arg1___,Field[q1_,ci1_,si1_,x_],FieldB[q2_,ci2_,si2_,y_],arg2___]:> I DE[{q1,q2},{y,x}][CI[{ci1,ci2}],SI[{si1,si2}]]*tempT[arg1,arg2])/.{DE[{ferm1_, ferm2_}, __][___] /; ferm1 =!= ferm2 :>  0,DE[{___}, {x_,y_}][___] /; x ==y  :>  0}
-
+qcurent = Riffle[quarks,#]&/@Permutations[qbars];
+qtemps =Plus@@(((Signature@lign[exp,#])*(tempT@@#)&/@qcurent)//.tempT[arg1___,QField[q1_,ci1_,li1_,x_],QFieldB[q2_,ci2_,li2_,y_],arg2___]:> I DE[{q1,q2},{y,x}][ci[{ci1,ci2}],li[{li1,li2}]]*tempT[arg1,arg2])/.{DE[{ferm1_, ferm2_}, __][___] /; ferm1 =!= ferm2 :>  0,DE[{___}, {x_,y_}][___] /; x ==y  :>  0};
+Plus@@(qtemps*tempT@@@Permutations[gluons]//.tempT[arg1___,GField[n1_,x_][li[{li1_,li2_}]],GField[n2_,y_][li[{li3_,li4_}]],arg2___]:> GE[GField[n1,x][li[{li1,li2}]],GField[n2,y][li[{li3,li4}]]]*tempT[arg1,arg2])/.{GE[GField[_,x][___],GField[_,x][___]]:>  0}
 ];
 
 
 (*\:5224\:65ad\:81ea\:65cb\:4e0e\:989c\:8272\:6307\:6807*)
-spin[DE[{ferm_, ferm_}, {x_ , y_} ] [ci_,SI[si_]]]:=si 
-spin[a_[SI[si_]]]:=si
-spin[eps[a_,b_,c_]]:=0
+spin[DE[{ferm_, ferm_}, {x_ , y_} ] [ci_,li[si_]]]:=si
+spin[a_[li[si_]]]:=si
+spin[eps[a_,b_,c_]]:=Nothing
 spin[Trans[a_]]:=Reverse[spin[a]]
-spin[a_]:=If[NumberQ[a],0]
-unspin[con_]:=Module[{cons = con},cons /.{a_[SI[si_]]:>a,DE[a__][CI[ci_],SI[si_]]:>DE[a][CI[ci]]}]
-color[DE[{ferm_, ferm_}, {x_ , y_} ] [CI[ci_],SI[si_]]]:=ci 
-color[DE[{ferm_, ferm_}, {x_ , y_} ] [CI[ci_]]]:=ci 
-color[a_[CI[ci_]]]:=ci
-color[a_[SI[si_],CI[ci_]]]:=ci
-color[a_[SI[si_]]]:= {0,0}
+spin[a_]:=Nothing
+spin[a_?scalarQ]:=Nothing
+spin[GE[__]]:=Nothing
+unspin[con_]:=Module[{cons = con},cons /.{a_[li[si_]]:>a,DE[a__][ci[cis_],li[si_]]:>DE[a][ci[cis]]}]
+color[DE[{ferm_, ferm_}, {x_ , y_} ] [li[ci_],li[si_]]]:=ci 
+color[DE[{ferm_, ferm_}, {x_ , y_} ] [ci[ci_]]]:=ci 
+color[a_[ci[ci_]]]:=ci
+color[a_[li[si_],ci[ci_]]]:=ci
+color[a_[li[si_]]]:= Nothing
 color[delta[a_,b_]]:={a,b}
 color[eps[a_,b_,c_]]:={a,b,c}
 color[lambda[a_,b_,n_]]:={a,b,n}
 color[Trans[a_]]:=color[a]
-color[a_]:=If[NumberQ[a],0]
-uncolor[con_]:=Module[{cons = con},cons /.{a_[CI[ci_]]:>a,DE[a__][CI[ci_],SI[si_]]:>DE[a][SI[ci]]}]
+color[a_]:=Nothing
+uncolor[con_]:=Module[{cons = con},cons /.{a_[ci[ci_]]:>a,DE[a__][ci[ci_],li[si_]]:>DE[a][li[ci]]}]
 posandflovor[DE[{q_,q_},{y_,x_}][___]]:={q,x-y}
-posandflovor[a___]:=0
-SetAttributes[{color,spin,posandflovor},Listable]
+posandflovor[a___]:=Nothing
+lorenz[gamma[\[Mu]_]]:={\[Mu]}
+lorenz[sigma[\[Mu]_,\[Nu]_]]:={\[Mu],\[Nu]}
+lorenz[Trans[a_]]:=Reverse[lorenz[a]]
+lorenz[a_]:=Nothing
+SetAttributes[{color,spin,posandflovor,lorenz},Listable]
 
 
 (*\:7565\:53bb\:6d1b\:4f26\:5179\:6307\:6807*)
-Tracktemp[Dot[conj_]]:=Track[Dot@@RotateLeft[#,Position[ProgQ[#],True][[1,1]]-1]&@Table[conj [[i]],{i,Length[conj]}]]
-join[con_]:=Block[{list = con,templist = {},pointer = Null,postion = {1,2},flag = Range[Length[con]],Qslash = False,element = 1,result = {},resulttemp = {},transQ = Table[0,Length[con]],n=0},
-templist = spin/@list;
- If[Mod[Length[Select[list,ProgQ]],2]==1,Qslash =True];
-If[Qslash,element = First[FirstCase[Sort[Tally[Flatten[templist]]],{_,1}]];
-postion = First[Position[templist,element]];
-postion = {postion[[1]],If[postion[[2]]==1,2,1]}];
-While[(Length[flag]>0),
-
-If[FreeQ[flag,postion[[1]]],postion = {First[flag],2} ;result = Append[result,resulttemp];resulttemp = {}];
-resulttemp = Append[resulttemp,postion[[1]]];
-flag = DeleteCases[flag,postion[[1]]];
-pointer = templist[[postion[[1]],postion[[2]]]];
-postion = Flatten[DeleteCases[Position[templist,pointer],postion]];
-
-postion = {postion[[1]],If[postion[[2]]==1,2,transQ [[postion[[1]]]]=1;1]};
-n++];
-
-result = Append[result,resulttemp];
-
-list = Table[If[transQ[[i]]==1,Trans[list[[i]]],list[[i]]],{i,Length[list]}];
-
-result = Table[list[[result[[i]]]],{i,Length[result]}];
-If[Qslash,Times@@Flatten[{Dot@@First[result],Table[Tracktemp[result[[i]]],{i,2,Length[result]}]}],Times@@Table[Tracktemp[result[[i]]],{i,1,Length[result]}]]//unspin
-]//Quiet;
+givePointsByEdge[UndirectedEdge[a_,b_]]:= {a,b}
+SetAttributes[givePointsByEdge,Listable]
+TransQ[h_]:=Head[h]==Trans
+Tracktemp[Dot[conj__]]:=If[MatchQ[Table[conj [[i]],{i,Length[conj]}],{__?TransQ}],Track[Dot@@Table[Trans[conj [[i]]],{i,Length[conj]}]],Track[Dot@@RotateLeft[#,Position[ProgQ[#],True][[1,1]]-1]&@Table[conj [[i]],{i,Length[conj]}]]]
+findMatrixsWithIndex[list_,index_]:=Union[Select[list,SameQ[spin[#],index]&],Trans/@Select[list,SameQ[spin[#],Reverse[index]]&]]
 traceContract[mycon_]:=Module[{mylist= Transpose[FactorList[mycon]][[1]],fac= Times@@Transpose[FactorList[mycon]][[2]]},
-fac = fac*Times@@Select[mylist,spin[#]==0&];
-mylist = Select[mylist,spin[#]=!=0&];
+fac = fac*Times@@Select[mylist,spin[#]===Nothing&];
+mylist = Select[mylist,spin[#]=!=Nothing&];
 fac*join[mylist]
 ]//Quiet;
+setGraphWithIndices[index_?ListQ]:=(#[[1]]\[UndirectedEdge]#[[2]])&/@index
+join[con_]:=Block[{list = con,spins = spin/@con,graph = Null,temps = Null,templist,TrQ=Null,reverse = {},reverseQ = {}},
+graph = setGraphWithIndices[spins];
+graph = ConnectedGraphComponents[graph];
+templist = If[AcyclicGraphQ[#],temps = FindHamiltonianPath[#];reverse ={First[temps],Last[temps]};
+reverseQ =  Select[Flatten[spins],MemberQ[reverse ,#]&];
+If[EvenQ[First[First[Position[Flatten[spins],First[temps]]]]],temps = Reverse[temps]];{{Table[{temps[[i-1]],temps[[i]]},{i,2,Length[temps]}]},0},{givePointsByEdge[FindPostmanTour[#]],1}]&/@graph;
+TrQ = Last[Transpose[templist]];
+templist =Table[Dot@@Flatten[findMatrixsWithIndex[list,#]&/@templist[[i,1,1]]],{i,Length[templist]}];
+Times@@Table[If[TrQ[[i]]==1,Tracktemp[templist[[i]]],templist[[i]]],{i,Length[TrQ]}]//unspin
+]//Quiet;
+
+
+
+(*\:65b0\:6307\:6807*)
+$counts = {index=0}
+indexNew[\[Mu]_?StringQ,OptionsPattern["EndQ"-> False]]:= Module[{},If[OptionValue["EndQ"],index=index+1;ToExpression[ToString[\[Mu]]<>ToString[index-1]],ToExpression[ToString[\[Mu]]<>ToString[index]]]];
 
 
 (*\:56fe\:5408\:6cd5\:6027\:5224\:65ad*)
@@ -198,61 +227,67 @@ contentQ[myset_,mycase_]:=Module[{set = myset, case = mycase},
 And@@(!FreeQ[case,#]&/@set)]
 
 
-(*\:4f20\:64ad\:5b50*)
-colors[a_,b_,key_]:= Block[{ss},
-ss= {{"a",delta[a,b]},{"b",1/2 lambda[a,b,\[Eta]]},{"c",delta[a,b]},{"d",delta[a,b]},{"e",delta[a,b]},{"f",delta[a,b]},{"g",delta[a,b]},{"h", lambda[a,b,\[Eta]]},{"i",delta[a,b]},{"j",delta[a,b]},{"k",delta[a,b]},{"l",delta[a,b]},{"m",1/2 lambda[a,b,\[Eta]]},{"n",lambda[a,b,\[Eta]]},{"o",1/2 lambda[a,b,\[Eta]]},{"p",1/2 lambda[a,b,\[Eta]]}};
-ss= Association[Table[ss[[i,1]]-> ss[[i,2]],{i,Length[ss]}]];
-ss[key]]
-factors[q_,x_,key_]:= Block[{ss},
-ss= {{"a",I/(2 \[Pi]^2 x^4)},{"b",(I gc Gn)/(32 \[Pi]^2 x^2)},{"c",-(1/12) \[LeftAngleBracket]q bar[q]\[RightAngleBracket]},{"d",1/192 x^2 \[LeftAngleBracket]G gc q \[Sigma] bar[q]\[RightAngleBracket]},{"e",-(I (gc^2 x^2 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2)/7776)},{"f",-((x^4 \[LeftAngleBracket]gc^2 G^2\[RightAngleBracket] \[LeftAngleBracket]q bar[q]\[RightAngleBracket])/\!\(TraditionalForm\`27648\))},{"g",-(Subscript[M, q]/(4 \[Pi]^2 x^2))},{"h",(gc Gn log[-x^2] Subscript[M, q])/(32 \[Pi]^2)},{"i",-((x^2 \[LeftAngleBracket]G^2 gc^2\[RightAngleBracket] log[-x^2] Subscript[M, q])/(1536 \[Pi]^2))},{"j",1/48 I \[LeftAngleBracket]q bar[q]\[RightAngleBracket] Subscript[M, q]},{"k",-((I x^2 \[LeftAngleBracket]G gc q \[Sigma] bar[q]\[RightAngleBracket] Subscript[M, q])/1152)},{"l",-((gc^2 x^4 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2 Subscript[M, q])/31104)},{"m",(I)/(32 \[Pi]^2 x^2)},{"n",(log[-x^2] Subscript[M, q])/(32 \[Pi]^2)},{"o",-(1/(2^6*3))\[LeftAngleBracket]G gc q \[Sigma] bar[q]\[RightAngleBracket]},{"p",(I Subscript[M, q])/(2^8*3) \[LeftAngleBracket]G gc q \[Sigma] bar[q]\[RightAngleBracket]}};
-ss= Association[Table[ss[[i,1]]-> ss[[i,2]],{i,Length[ss]}]];
-ss[key]]
+factors[a_,b_,q_,x_,key_]:= Block[{fa},fa = {{"a",I/(2 \[Pi]^2 x^4)*delta[a,b]*slash[x]},
+{"b",1/2 lambda[a,b,indexNew["\[Eta]"]]*(I gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(32 \[Pi]^2 x^2)*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
+{"c",-(1/12) \[LeftAngleBracket]q bar[q]\[RightAngleBracket]*delta[a,b]},
+{"d",1/192 x^2 \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*delta[a,b]},
+{"e",-(I (gs^2 x^2 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2)/7776)*delta[a,b]*slash[x]},
+{"f",-((x^4 \[LeftAngleBracket]gs^2 "G"^2\[RightAngleBracket] \[LeftAngleBracket]q bar[q]\[RightAngleBracket])/\!\(TraditionalForm\`27648\))*delta[a,b]},
+{"g",-(Subscript["m", q]/(4 \[Pi]^2 x^2))*delta[a,b]},
+{"h",(gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]Log[-x^2] Subscript["m", q])/(32 \[Pi]^2)*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*lambda[a,b,indexNew["\[Eta]"]]},
+{"i",-((x^2 \[LeftAngleBracket]"G"^2 gs^2\[RightAngleBracket] Log[-x^2] Subscript["m", q])/(1536 \[Pi]^2))*delta[a,b]},
+{"j",1/48 I \[LeftAngleBracket]q bar[q]\[RightAngleBracket] Subscript["m", q]*slash[x]*delta[a,b]},
+{"k",-((I x^2 \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket] Subscript["m", q])/1152)*delta[a,b]*slash[x]},{"l",-((gs^2 x^4 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2 Subscript["m", q])/31104)*delta[a,b]},
+{"m",(I)/(32 \[Pi]^2 x^2)*1/2 *(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])lambda[a,b,indexNew["\[Eta]"]]},
+{"n",(Log[-x^2] Subscript["m", q])/(32 \[Pi]^2)*lambda[a,b,indexNew["\[Eta]"]]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
+{"o",-(1/(2^6*3))\[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
+{"p",(I Subscript["m", q])/(2^8*3) \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
+indexNew["TZOR","EndQ"->True];
+fa[key]]
 
 
 (*\:8272\:6307\:6807\:8ba1\:7b97*)
-
-filename = "facs5.csv";
-parameter[f_[a___]]:={a}
+parameter[f_[a__]]:=Partition[Riffle[{a},Table[3,3]],2]
+parameter[lambda[a_,b_,n_]]:={{a,3},{b,3},{n,8}}
 parameters[f_]:=parameter[f]
-parameters[Times[f_,g__]]:=Union[ parameter[f],parameters[Times[g]]];
-epslion = Flatten[Table[LeviCivitaTensor[3][[i,j,k]],{i,1,3},{i,1,3},{j,1,3},{k,1,3}],1];
-del = {{1,0,0},{0,1,0},{0,0,1}};
-\[Lambda]1={{0,1,0},{1,0,0},{0,0,0}} ;
-\[Lambda]2={{0,-I,0},{I,0,0},{0,0,0}} ;
-\[Lambda]3={{1,0,0},{0,-1,0},{0,0,0}} ;
-\[Lambda]4={{0,0,1},{0,0,0},{1,0,0}};
-\[Lambda]5={{0,0,-I},{0,0,0},{I,0,0}} ;
-\[Lambda]6={{0,0,0},{0,0,1},{0,1,0}};
-\[Lambda]7={{0,0,0},{0,0,-I},{0,I,0}} ;
-\[Lambda]8=1/Sqrt[3] {{1,0,0},{0,1,0},{0,0,-2}} ;
-Gellman = {\[Lambda]1,\[Lambda]2,\[Lambda]3,\[Lambda]4,\[Lambda]5,\[Lambda]6,\[Lambda]7,\[Lambda]8};
-\[Epsilon][a_,b_,c_]:=epslion[[a,b,c]];
-\[Delta][a_,b_]:=del[[a,b]];
-\[Lambda][a_,b_,n_]:=Gellman[[n,a,b]];
-caculateColor[hashStr_,exp_]:=Module[{indexOfSum=parameters[exp],expused=exp,log=""},
-SetDirectory[ NotebookDirectory[]];
-log =File[ \!\(TraditionalForm\`FileNameJoin[{NotebookDirectory[], filename}]\)];
-expused=If[FreeQ[indexOfSum,\[Eta]],Einsum[expused/.{eps->\[Epsilon],delta->\[Delta]},{indexOfSum,3}],Sum[Einsum[expused/.{eps->\[Epsilon],delta->\[Delta],lambda->\[Lambda]},{Cases[indexOfSum,Except[\[Eta]]],3}],{\[Eta],8}]];
+parameters[Times[f_,g_]]:=Union[ parameter[f],parameters[Times[g]]];
+caculateColor[hashStr_,exp_]:= Module[{indexOfSum =  parameters[exp],expused=exp,log="",
+epslion = Flatten[Table[LeviCivitaTensor[3][[i,j,k]],{i,1,3},{i,1,3},{j,1,3},{k,1,3}],1],
+del = {{1,0,0},{0,1,0},{0,0,1}},Gellman = {{{0,1,0},{1,0,0},{0,0,0}},{{0,-I,0},{I,0,0},{0,0,0}},{{1,0,0},{0,-1,0},{0,0,0}},{{0,0,1},{0,0,0},{1,0,0}},{{0,0,-I},{0,0,0},{I,0,0}} ,{{0,0,0},{0,0,1},{0,1,0}},{{0,0,0},{0,0,-I},{0,I,0}},1/Sqrt[3] {{1,0,0},{0,1,0},{0,0,-2}}}
+},
+SetDirectory[NotebookDirectory[]];
+log = \!\(TraditionalForm\`File[FileNameJoin[{NotebookDirectory[], "\<facs5.csv\>"}]]\);
+expused = expused/.{eps[a_,b_,c_]:> epslion[[a,b,c]],delta[a_,b_]:> del[[a,b]],lambda[a_,b_,n_]:>Gellman[[n,a,b]]};
+expused = Fold[Sum[#1,#2]&,expused,indexOfSum];
 OpenAppend[log];
 If[NumberQ[expused],WriteString[log,hashStr,",",ToString[expused]<>"\n"]];
 Close[log];
 expused
-];//Quiet
-NColorFactors[Times[ factor_,factor1__]]:= Block[{fac =SortBy[Select[{factor,factor1},Length[color[#]]>1&],First],fac1 =Times@@Select[{factor,factor1},Length[color[#]]<=1&],facs = ToExpression[Import[NotebookDirectory[]<>filename,"Data"]],str},
+]//Quiet
+NColorFactors[0]:= 0
+NColorFactors[Times[ factor_,factor1__]]:= Block[{fac =SortBy[Select[{factor,factor1},Length[color[#]]>1&],First],fac1 =Times@@Select[{factor,factor1},Length[color[#]]<=1&],facs = ToExpression[Import[NotebookDirectory[]<>"facs5.csv","Data"]],str},
 facs = Association[Table[facs[[i,1]]->facs[[i,2]],{i,Length[facs]}]];
 str = ToString[Join[Select[fac,Head[#]===eps&],Select[fac,Head[#]=!=eps&]]];
-If[facs[Hash[str]]===Missing["KeyAbsent",Hash[str]],caculateColor[Hash[str],Times@@fac]*fac1,facs[Hash[str]]*fac1]
-];//Quiet
+If[Head[facs[Hash[str]]]===Missing,caculateColor[Hash[str],Times@@fac]*fac1,facs[Hash[str]]fac1]
+]//Quiet
 SetAttributes[NColorFactors,Listable]
 
 
 (*\:4f20\:64ad\:5b50\:66ff\:6362*)
 colrelator[]:=1
-replace[cont_,dig_]:=Block[{func =  cont,mydig = dig,j=0,ps = 1,fac = 1},
-ps = cont/.DE[{q_,q_},{y_,x_}][CI[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
-fac = Times@@Select[Transpose[FactorList[ps/.{Track->Times,Dot->Times,Trans[x_]:> x}]][[1]],Head[#]==colrelator&]/.colrelator[q_,x_,ci1_,ci2_,l_]:>factors[q,x,dig[[l]]]*colors[ci1,ci2,dig[[l]]];
-fac*(ps/.colrelator[q_,x_,ci1_,ci2_,l_]:> de[x,dig[[l]]])
-]
+replace[cont_,dig_]:=Block[{func =  cont,mydig = dig,j=0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
+lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
+ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
+
+ps = ps/.{colrelator[q_,x_,ci1_,ci2_,l_]:>factors[ci1,ci2, q,x,dig[[l]]]};
+
+ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
+colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
+lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
+If[Length[Intersection[{"m","n","o","p"},dig]]===0,colorout={};lorenout = {}];
+Times@@(delta[#[[1]],#[[2]]]&/@Partition[colorout,2])Times@@(metric[#[[1]],#[[2]]]&/@Partition[lorenout,2])ps
+];
 
 
 (*\:63d0\:53d6\:7b97\:7b26*)
@@ -282,37 +317,54 @@ fumar
 
 ToTeXForm[expr_]:=Block[{},
 part1=expr/.{
-(H_)[CI[a__],SI[b__]]/;Head[H]=!=DE :>TForm[H[CI[a],SI[b]]],
-(H_)[SI[b__]]/;H=!=DE :>TForm[H[SI[b]]],
-(H_)[CI[a__]]/;H=!=DE :>TForm[H[CI[a]]]
+(H_)[ci[a__],si[b__]]/;Head[H]=!=DE :>TForm[H[ci[a],si[b]]],
+(H_)[si[b__]]/;H=!=DE :>TForm[H[si[b]]],
+(H_)[ci[a__]]/;H=!=DE :>TForm[H[ci[a]]]
 };
 WriteString["stdout",ToString[part1,TeXForm]]
 ]
 
 
+(*\:56db\:77e2\:548c\:5ea6\:89c4\:7684\:683c\:5f0f*)
+Format[fourVector[v_,index_],TraditionalForm]:=DisplayForm[Subscript[v,index]]
+Format[metric[index1_,index2_],TraditionalForm]:=DisplayForm[Subscript["g",RowBox[{index1,index2}]]]
+Format[gamma[index_],TraditionalForm]:=DisplayForm[Superscript["\[Gamma]",index]]
+SetAttributes[metric,Orderless]
+(*\:56db\:7ef4\:504f\:5bfc\:6027\:8d28\:548c\:5b9a\:4e49*)
+DLorenz[fourVector[x_,index1_],x_,index2_]:=metric[index1,index2]
+DLorenz[metric[index1_,index2_],x_,index3_]:=0
+DLorenz[fun1_ fun2_,x0_,index_]:=DLorenz[fun1,x0,index]fun2+fun1 DLorenz[fun2,x0,index]
+DLorenz[fun1_ +fun2_,x0_,index_]:=DLorenz[fun1,x0,index]+DLorenz[fun2,x0,index]
+DLorenz[fun0_?(!MemberQ[#,fourVector]&),x0_,index_]:=Module[{\[Nu] = Exponent[fun0,x0]},If[\[Nu]==2,2 fourVector[x0,index],(D[fun0/.{x0->Sqrt[x0]},x0]/.{x0->x0^2})DLorenz[x0^2,x0,index]]]
+(*\:8f85\:52a9\:51fd\:6570*)
+giveIndice[fourVector[a_,index_],a_]:=index
+giveIndice[a_,x_]:=Nothing
+giveIndice[a_ b_,x_]:=Flatten[{giveIndice[a,x],giveIndice[b,x]}]
+
+(*\:5085\:91cc\:53f6\:4e3b\:79ef\:5206\:51fd\:6570*)
+fourierMasterFunction[s_,q_]:=- I 2^(4-2s) \[Pi]^2 (-q^2)^(s-2) Gamma[2-s]/Gamma[s]
 (*\:5085\:91cc\:53f6\:53d8\:6362*)
-furier[s_]:=-I 2^(4-2s) \[Pi]^2 (-p^2)^(s-2) Gamma[2-s]/Gamma[s]
+fourierTransform[a_?NumericQ,x0_,p0_]:=a (2\[Pi])^4 delta[p0]
+fourierTransform[func1_+func2_,x0_,p0_]:=fourierTransform[func1,x0,p0]+fourierTransform[func2,x0,p0]
+fourierTransform[func0_,x0_,p0_]:=Module[{fun = func0,s=-Exponent[func0,x0]/2,x=x0,p=p0,nslash = MemberQ[func0,slash[x0],Infinity],nlog =Exponent[func0,Log[-x0^2]],slashindex = Nothing,nLorenz =giveIndice[func0,x0] ,tempresult=0,usedfunction = fourierMasterFunction,arg},
+Print[{fun,s,x,p,nslash,nlog,slashindex,nLorenz,tempresult}];
+usedfunction=(-1)^nlog D[fourierMasterFunction[arg,p],{arg,nlog}];
 
-furierLog[s_]:=-(1/(p^4 Gamma[s])) 4^(2-s) (-p^2)^s \[Pi]^2 Gamma[2-s] (2 I Log[2]-I Log[-p^2]+I PolyGamma[0,2-s]+I PolyGamma[0,s])
-fourierT[0,x_,p_]:=0
-fourierT[ss_,x_,p_]:= Module[{\[Nu]=-Exponent[ss,x]/2, ee =0,slashQ =MemberQ[ss,slash[x],Infinity],logQ =MemberQ[ss,log[-x^2],Infinity],temp},
-temp =If[logQ,
-temp =SeriesCoefficient[Series[furierLog[\[Nu]+s],{s,0,1}],0]//Expand;If[\[Nu]==1,temp,Select[temp,(MemberQ[#,Log[-p^2],Infinity])\[Or](Exponent[#,p]<0)&]],
-temp = SeriesCoefficient[Series[furier[\[Nu]+s],{s,0,1}],0]//Expand;If[\[Nu]==1,temp,Select[temp,(MemberQ[#,Log[-p^2],Infinity])\[Or](Exponent[#,p]<0)&]]
-];
-
-temp = If[slashQ,-I ss*D[temp,p]*(-x^2)^\[Nu]*(slash[p]/(p slash[x])),ss*temp*(-x^2)^\[Nu]]//Simplify;
-If[logQ,temp*Log[-p^2]/log[-x^2],temp]//Simplify
+tempresult=SeriesCoefficient[usedfunction/.{arg->s+\[Epsilon]},{\[Epsilon],0,0}]//Expand;
+tempresult = If[Head[tempresult]=!=  Plus,tempresult,Select[tempresult,(MemberQ[#,Log[-p^2],Infinity])\[Or](Exponent[#,p]<0)&]];
+fun = fun/.{fourVector[x,q_]:>1,Log[-x^2]->1};
+tempresult = If[Length[nLorenz]>0,Fold[ Expand[-I DLorenz[#1,p,#2]]&,tempresult*(-x^2)^s*fun,nLorenz ],tempresult*(-x^2)^s*fun];
+If[nslash,slashindex = ToExpression["\[Alpha]"<>Fold[StringDelete,DateString[],{" ",":"}]];
+Expand[-I DLorenz[tempresult,p,slashindex]]/.{fourVector[p,slashindex]->1,slash[x]-> slash[p],metric[index_,slashindex]:>  gamma[index]},tempresult ]
 ]
-SetAttributes[fourierT,Listable]
 
 
 (*borel\:53d8\:6362*)
 ff[s_]:=Q^(s-4) 2^(2-s) Gamma[2-s/2]/Gamma[s/2]
 gg[s_]:=M^(s-2) 2^(2-s) 1/Gamma[s/2]
-borelT[Log[Q],Q,M]:=Log[Q]:> -M^2/2
-borelT[0,Q_,M_]:={q_:> q}
-borelT[ss_,Q_,M_]:=Module[
+borelTransform[Log[Q],Q,M]:=Log[Q]:> -M^2/2
+borelTransform[0,Q_,M_]:={q_:> q}
+borelTransform[ss_,Q_,M_]:=Module[
 {k= Exponent[ss,Q]+4,n=4,jj},
 jj=(Table[{SeriesCoefficient[Series[ff[k+s],{s,0,n}],j],SeriesCoefficient[Series[gg[k+s],{s,0,n}],j]},{j,-1,n}]//Expand);
 jj = jj/.{Log[q_]^l_ q_^k_:> m[q,k,l],Log[q_]^l_/q_^k_:> m[q,-k,l],Log[q_]q_^k_:> m[q,k,1],Log[q_]/q_^k_:> m[q,-k,1]};
@@ -325,4 +377,7 @@ jj/.m[q_,k_,l_]:> Log[q]^l q^k//FullSimplify
 SetAttributes[fourierT,Listable]
 
 
-EndPackage[]
+End[];
+
+
+EndPackage[];
