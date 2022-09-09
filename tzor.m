@@ -111,8 +111,9 @@ CQ[a_+b_]:=CQ[a]\[And]CQ[b];
 CQ[a_ .b_]:=CQ[a]\[And]CQ[b];
 Trans[Trans[a_]]:= a
 Trans[a_+b_]:= Trans[a]+Trans[b]
-Trans[a_?(!CQ[#]&) b_]:=b Trans[a]
+Trans[a_ b_?CQ]:=b Trans[a]
 Trans[1]:= 1
+Trans[a_?NumberQ]:= a
 Track[a_?CQ b_]:= a Track[b]
 
 
@@ -122,9 +123,6 @@ gluonQ[expr_ ]:=Head[Head[expr]]===GField;
 qorgQ[expr_]:= quarkQ[expr]||gluonQ[expr];
 ProgQ[pro_]:= Head[Head[pro]]===DE;
 SetAttributes[ProgQ,Listable]
-
-
-
 
 
 tempContract[]:= 1
