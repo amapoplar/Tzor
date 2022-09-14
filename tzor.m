@@ -15,6 +15,8 @@ $IndicesLists = {li,ci}
 $MatrixAndTensorLists = {eps,delta,lambda,sigma,slash}
 $SpinAndColor = {spin, color, unspin, uncolor, posandflovor,lorenz}
 $SpinSpace = {fourVector,gamma,metric}
+$Consendate = {mass,chiral,hybrid,doubleG,tripleG}
+$porgator = {factorsx,factorsp,factorsxG,factorspG}
 
 
 QField::usage = "QuarkQField[f,a,\[Alpha],x] is a flavor f quark filed at postion x with color a and Lonrtez index \[Alpha]";
@@ -37,8 +39,8 @@ Einsum::usage = "caclulate the value by Einstein summation convention"
 ToTeXForm::usage = "LatexForm of experssion"
 fourierTransform::usage = "caclulate the Fourier transform from x-space to p-sapce"
 borelTransform::usage="cacluate the Borel transform form q to M"
-gs::usage="strong coupling"
-factors
+gs::usage = "strong coupling"
+
 
 
 Begin["`Private`"];
@@ -56,6 +58,13 @@ Format[DE[{ferm_,ferm_},{x_,y_}][ci[{\[Mu]_,\[Nu]_}]],TraditionalForm]:=DisplayF
 Format[DE[{ferm_,ferm_},{x_,y_}][ci[{a_,b_}],li[{\[Mu]_,\[Nu]_}]],TraditionalForm]:= DisplayForm[RowBox[{SubsuperscriptBox["S", RowBox[{\[Mu], \[Nu]}], RowBox[{ferm, ",", RowBox[{a, b}]}]], "(",y-x, ")"}]]
 Format[GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]],TraditionalForm]:= DisplayForm[RowBox[{"\[LeftAngleBracket]",SubsuperscriptBox["G",RowBox[{\[Mu]1,\[Nu]1}],n1],"(", x, ")",SubsuperscriptBox["G",RowBox[{\[Mu]2,\[Nu]2}],n2],"(", y, ")", "\[RightAngleBracket]"}]]
 SetAttributes[GE,Orderless]
+
+
+Format[mass[q_], TraditionalForm] := DisplayForm[SubscriptBox["m", RowBox[{q}]]]
+Format[chiral[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",OverscriptBox[q,"_"],q,"\[RightAngleBracket]"}]]
+Format[hybrid[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",gs,OverscriptBox[q,"_"],"\[Sigma]","\[CenterDot]","G",q,"\[RightAngleBracket]"}]]
+Format[doubleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",SuperscriptBox[gs,2],SuperscriptBox["G",2],"\[RightAngleBracket]"}]]
+Format[tripleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]","f",SuperscriptBox["G",3],"\[RightAngleBracket]"}]]
 
 
 (*\:77e9\:9635\:7684\:6837\:5f0f*)
@@ -201,48 +210,62 @@ $counts = {index=0}
 indexNew[\[Mu]_?StringQ,OptionsPattern["EndQ"-> False]]:= Module[{},If[OptionValue["EndQ"],index=index+1;ToExpression[ToString[\[Mu]]<>ToString[index-1]],ToExpression[ToString[\[Mu]]<>ToString[index]]]];
 
 
-(*\:56fe\:5408\:6cd5\:6027\:5224\:65ad*)
-reset["b"]:="m";
-reset["h"]:="n";
-reset["c"]:="o";
-reset["j"]:="p";
-Protect[reset];
-test[myset_]:=Block[{set=progator[#][[4]]&/@myset,sets = myset},If[Count[set,"G"]==1,sets[[FirstPosition[set,"S"][[1]]]]=reset[sets[[FirstPosition[set,"S"][[1]]]]];sets[[FirstPosition[set,"G"][[1]]]]=reset[sets[[FirstPosition[set,"G"][[1]]]]];sets,sets]
-]
-mark = Alphabet["Latin"][[;;12]];
-expoent = {-3,-1,0,2,3,4,-2,\[Epsilon],2+\[Epsilon],1,3,4};
-condension = {0,1,2,0,0,0,0,1,0,2,0,0};
-mass = {0,0,0,0,0,0,1,1,1,1,1,1};
-cons = {"N","G","S","N","N","N","N","G","N","S","N","N"};
-progator = Association[Table[mark[[i]]-> {expoent[[i]],condension[[i]],mass[[i]],cons[[i]]},{i,Length[mark]}]];
-legalQ[set_,k_]:= (Plus@@(progator[#][[1]]&/@set)===k)\[And](Plus@@(progator[#][[3]]&/@set)<= 1)\[And]((Length[Select[(progator[#][[2]]&/@set),#==1&]]<= 2)\[And]!((FreeQ[(progator[#][[2]]&/@set),2])\[And]Length[Select[(progator[#][[2]]&/@set),#==1&]]==1));
-
-feynCalc[n_,k_]:= Module[{set = Select[Union[Sort/@Tuples[mark,n]],legalQ[#,k]&]},
-set = Table[test[set[[i]]],{i,Length[set]}];
-Flatten[Table[Permutations[set[[i]]],{i,Length[set]}],1]
- ];
-contentQ[myset_,mycase_]:=Module[{set = myset, case = mycase},
-And@@(!FreeQ[case,#]&/@set)]
-
-
-factors[a_,b_,q_,x_,key_]:= Block[{fa},fa = {{"a",I/(2 \[Pi]^2 x^4)*delta[a,b]*slash[x]},
+(*x\:7a7a\:95f4\:4f20\:64ad\:5b50*)
+factorsx[a_,b_,q_,x_,key_]:= Block[{fa},fa = {{"a",I/(2 \[Pi]^2 x^4)*delta[a,b]*slash[x]},
 {"b",1/2 lambda[a,b,indexNew["\[Eta]"]]*(I gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(32 \[Pi]^2 x^2)*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
-{"c",-(1/12) \[LeftAngleBracket]q bar[q]\[RightAngleBracket]*delta[a,b]},
-{"d",1/192 x^2 \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*delta[a,b]},
-{"e",-(I (gs^2 x^2 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2)/7776)*delta[a,b]*slash[x]},
-{"f",-((x^4 \[LeftAngleBracket]gs^2 "G"^2\[RightAngleBracket] \[LeftAngleBracket]q bar[q]\[RightAngleBracket])/\!\(TraditionalForm\`27648\))*delta[a,b]},
-{"g",-(Subscript["m", q]/(4 \[Pi]^2 x^2))*delta[a,b]},
-{"h",(gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]Log[-x^2] Subscript["m", q])/(32 \[Pi]^2)*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*lambda[a,b,indexNew["\[Eta]"]]},
-{"i",-((x^2 \[LeftAngleBracket]"G"^2 gs^2\[RightAngleBracket] Log[-x^2] Subscript["m", q])/(1536 \[Pi]^2))*delta[a,b]},
-{"j",1/48 I \[LeftAngleBracket]q bar[q]\[RightAngleBracket] Subscript["m", q]*slash[x]*delta[a,b]},
-{"k",-((I x^2 \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket] Subscript["m", q])/1152)*delta[a,b]*slash[x]},{"l",-((gs^2 x^4 \[LeftAngleBracket]q bar[q]\[RightAngleBracket]^2 Subscript["m", q])/31104)*delta[a,b]},
+{"c",-(1/12) chiral[q]*delta[a,b]},
+{"d",1/192 x^2 hybrid[q]*delta[a,b]},
+{"e",-(I (gs^2 x^2 chiral[q]^2)/7776)*delta[a,b]*slash[x]},
+{"f",-((x^4 \[LeftAngleBracket]gs^2 "G"^2\[RightAngleBracket] chiral[q])/\!\(TraditionalForm\`27648\))*delta[a,b]},
+{"g",-(mass[q]/(4 \[Pi]^2 x^2))*delta[a,b]},
+{"h",(gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]Log[-x^2] mass[q])/(32 \[Pi]^2)*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*lambda[a,b,indexNew["\[Eta]"]]},
+{"i",-((x^2 doubleG Log[-x^2] mass[q])/(1536 \[Pi]^2))*delta[a,b]},
+{"j",1/48 I chiral[q] mass[q]*slash[x]*delta[a,b]},
+{"k",-((I x^2 hybrid[q] mass[q])/1152)*delta[a,b]*slash[x]},{"l",-((gs^2 x^4 chiral[q]^2 mass[q])/31104)*delta[a,b]},
 {"m",(I)/(32 \[Pi]^2 x^2)*1/2 *(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])lambda[a,b,indexNew["\[Eta]"]]},
-{"n",(Log[-x^2] Subscript["m", q])/(32 \[Pi]^2)*lambda[a,b,indexNew["\[Eta]"]]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
-{"o",-(1/(2^6*3))\[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
-{"p",(I Subscript["m", q])/(2^8*3) \[LeftAngleBracket]"G" gs q "\[Sigma]" bar[q]\[RightAngleBracket]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+{"n",(Log[-x^2] mass[q])/(32 \[Pi]^2)*lambda[a,b,indexNew["\[Eta]"]]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
+{"o",-(1/(2^6*3))hybrid[q]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
+{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
+indexNew["TZOR","EndQ"->True];
+fa[key]] 
+
+
+factorsp[a_,b_,q_,p_,key_]:= Block[{fa},fa = {{"a",I*(slash[p]+mass[q])/(p^2-mass[q]^2)}};
+fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
+indexNew["TZOR","EndQ"->True];
+fa[key]] 
+
+
+factorsxG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,x_,key_]:=Block[{fa},fa ={{"a",x}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]]
+
+
+factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,p_,key_]:=Block[{fa},fa ={{"a",p}};
+fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
+indexNew["TZOR","EndQ"->True];
+fa[key]]
+
+
+(*\:4f20\:64ad\:5b50\:66ff\:6362*)
+colrelator[]:=1
+colrelatorG[]:=1
+replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
+replace[cont_,digq_,digg_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,digg,"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
+replaces[cont_,digq_?ListQ,digg_?ListQ, OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]]:=Module[{func =  cont,mydig = digq,mydigg = digg,j=0,k = 0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
+lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
+ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
+ps = ps/.GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]]:> colrelatorG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x-y,k=k+1];
+ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,ToExpression["p"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
+If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,ToExpression["p"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
+ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
+colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
+lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
+If[Length[Intersection[{"m","n","o","p"},mydig]]===0,colorout={};lorenout = {}];
+Times@@(delta[#[[1]],#[[2]]]&/@Partition[colorout,2])Times@@(metric[#[[1]],#[[2]]]&/@Partition[lorenout,2])ps
+];
 
 
 (*\:8272\:6307\:6807\:8ba1\:7b97*)
@@ -272,31 +295,8 @@ If[Head[facs[Hash[str]]]===Missing,caculateColor[Hash[str],Times@@fac]*fac1,facs
 SetAttributes[NColorFactors,Listable]
 
 
-(*\:4f20\:64ad\:5b50\:66ff\:6362*)
-colrelator[]:=1
-replace[cont_,dig_]:=Block[{func =  cont,mydig = dig,j=0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
-lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
-ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
-
-ps = ps/.{colrelator[q_,x_,ci1_,ci2_,l_]:>factors[ci1,ci2, q,x,dig[[l]]]};
-
-ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
-colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
-lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
-If[Length[Intersection[{"m","n","o","p"},dig]]===0,colorout={};lorenout = {}];
-Times@@(delta[#[[1]],#[[2]]]&/@Partition[colorout,2])Times@@(metric[#[[1]],#[[2]]]&/@Partition[lorenout,2])ps
-];
-
-
 (*\:63d0\:53d6\:7b97\:7b26*)
-operator[0]:=0
-operator[\[LeftAngleBracket]a_\[RightAngleBracket]]:=\[LeftAngleBracket]a\[RightAngleBracket]
-operator[Subscript[M_, q_]]:=Subscript[M, q]
-operator[\[LeftAngleBracket]a_\[RightAngleBracket]^p_]:=\[LeftAngleBracket]a\[RightAngleBracket]^p
-operator[Times[a_,f__]]:=Module[{xxx= Select[{a,f},Head[#]===AngleBracket\[Or]Head[#]===Subscript\[Or]!FreeQ[Head/@Level[#,1],AngleBracket]&]},Times@@xxx/.{s->q,u->q,d->q,c->Q,b->Q}]
-operators[Plus[s1_,s2__]]:=(operator[s1]+operators[Plus[s2]])/2
-operators[p_]:=If[Head[p]=!=Plus,operator[p]]
-SetAttributes[operators,Listable]
+
 
 
 (*\:6c42\:548c\:7ea6\:5b9a*)
