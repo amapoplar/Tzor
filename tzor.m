@@ -4,11 +4,11 @@ BeginPackage["Tzor`"];
 
 
 CurrentValue[$FrontEndSession, {CommonDefaultFormatTypes, "Output"}] = TraditionalForm
-Print[" Tzor for "]
+Print[" Tz\[OAcute]r for ",Style["T",Red],"heori",Style["z",Red],"ed package ",Style["o",Red],"f sum ",Style["r",Red],"ules."]
 Print[" SumRules of QCD"]
 Print[" Author: poplar "]
 Print[" Version: alpha "]
-Print["Lastest Veresion : This Version"]
+Print[" Lastest Veresion : This Version"]
 
 
 $IndicesLists = {li,ci}
@@ -40,7 +40,7 @@ ToTeXForm::usage = "LatexForm of experssion"
 fourierTransform::usage = "caclulate the Fourier transform from x-space to p-sapce"
 borelTransform::usage="cacluate the Borel transform form q to M"
 gs::usage = "strong coupling"
-
+dimension::usage = "dimension of consedate."
 
 
 Begin["`Private`"];
@@ -65,6 +65,16 @@ Format[chiral[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",Ov
 Format[hybrid[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",gs,OverscriptBox[q,"_"],"\[Sigma]","\[CenterDot]","G",q,"\[RightAngleBracket]"}]]
 Format[doubleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",SuperscriptBox[gs,2],SuperscriptBox["G",2],"\[RightAngleBracket]"}]]
 Format[tripleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]","f",SuperscriptBox["G",3],"\[RightAngleBracket]"}]]
+
+
+dimension[mass[q_]]:=1
+dimension[chiral[q_]]:=3
+dimension[hybrid[q_]]:=5
+dimension[doubleG]:=4
+dimension[tripleG]:=6
+dimension[a_ b_]:=dimension[a]+dimension[b]
+dimension[a_^n_]:=n dimension[a]
+dimension[a_]:=0
 
 
 (*\:77e9\:9635\:7684\:6837\:5f0f*)
@@ -231,7 +241,7 @@ indexNew["TZOR","EndQ"->True];
 fa[key]] 
 
 
-factorsp[a_,b_,q_,p_,key_]:= Block[{fa},fa = {{"a",I*(slash[p]+mass[q])/(p^2-mass[q]^2)}};
+factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {{"a",I*(slash[knew]+mass[q])/(knew^2-mass[q]^2)}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
@@ -243,32 +253,37 @@ indexNew["TZOR","EndQ"->True];
 fa[key]]
 
 
-factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,p_,key_]:=Block[{fa},fa ={{"a",p}};
+factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,k_,key_]:=Block[{fa,knew = indexNew[ToString[k]]},fa ={{"a",knew}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]]
 
 
+(*\:6307\:5b9a\:60ac\:6302\:80f6\:5b50\:7ebf\:7684\:56fe*)
+$hangGluon ={"m","n","o","p"}
+
+
 (*\:4f20\:64ad\:5b50\:66ff\:6362*)
 colrelator[]:=1
 colrelatorG[]:=1
-replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
+replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> {ToExpression["b"],ToExpression["c"],ToExpression["Q"]},"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
 replace[cont_,digq_,digg_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,digg,"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
 replaces[cont_,digq_?ListQ,digg_?ListQ, OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]]:=Module[{func =  cont,mydig = digq,mydigg = digg,j=0,k = 0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
 lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
 ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
 ps = ps/.GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]]:> colrelatorG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x-y,k=k+1];
-ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,ToExpression["p"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
-If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,ToExpression["p"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
+ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,ToExpression["k"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
+If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,ToExpression["k"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
 ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
 colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
 lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
-If[Length[Intersection[{"m","n","o","p"},mydig]]===0,colorout={};lorenout = {}];
+If[Length[Intersection[$hangGluon,mydig]]===0,colorout={};lorenout = {}];
 Times@@(delta[#[[1]],#[[2]]]&/@Partition[colorout,2])Times@@(metric[#[[1]],#[[2]]]&/@Partition[lorenout,2])ps
 ];
 
 
 (*\:8272\:6307\:6807\:8ba1\:7b97*)
+filename = "factors.csv"
 parameter[f_[a__]]:=Partition[Riffle[{a},Table[3,3]],2]
 parameter[lambda[a_,b_,n_]]:={{a,3},{b,3},{n,8}}
 parameters[f_]:=parameter[f]
@@ -278,7 +293,7 @@ epslion = Flatten[Table[LeviCivitaTensor[3][[i,j,k]],{i,1,3},{i,1,3},{j,1,3},{k,
 del = {{1,0,0},{0,1,0},{0,0,1}},Gellman = {{{0,1,0},{1,0,0},{0,0,0}},{{0,-I,0},{I,0,0},{0,0,0}},{{1,0,0},{0,-1,0},{0,0,0}},{{0,0,1},{0,0,0},{1,0,0}},{{0,0,-I},{0,0,0},{I,0,0}} ,{{0,0,0},{0,0,1},{0,1,0}},{{0,0,0},{0,0,-I},{0,I,0}},1/Sqrt[3] {{1,0,0},{0,1,0},{0,0,-2}}}
 },
 SetDirectory[NotebookDirectory[]];
-log = \!\(TraditionalForm\`File[FileNameJoin[{NotebookDirectory[], "\<facs5.csv\>"}]]\);
+log = \!\(TraditionalForm\`File[FileNameJoin[{NotebookDirectory[], filename}]]\);
 expused = expused/.{eps[a_,b_,c_]:> epslion[[a,b,c]],delta[a_,b_]:> del[[a,b]],lambda[a_,b_,n_]:>Gellman[[n,a,b]]};
 expused = Fold[Sum[#1,#2]&,expused,indexOfSum];
 OpenAppend[log];
@@ -345,9 +360,7 @@ fourierMasterFunction[s_,q_]:=- I 2^(4-2s) \[Pi]^2 (-q^2)^(s-2) Gamma[2-s]/Gamma
 fourierTransform[a_?NumericQ,x0_,p0_]:=a (2\[Pi])^4 delta[p0]
 fourierTransform[func1_+func2_,x0_,p0_]:=fourierTransform[func1,x0,p0]+fourierTransform[func2,x0,p0]
 fourierTransform[func0_,x0_,p0_]:=Module[{fun = func0,s=-Exponent[func0,x0]/2,x=x0,p=p0,nslash = MemberQ[func0,slash[x0],Infinity],nlog =Exponent[func0,Log[-x0^2]],slashindex = Nothing,nLorenz =giveIndice[func0,x0] ,tempresult=0,usedfunction = fourierMasterFunction,arg},
-Print[{fun,s,x,p,nslash,nlog,slashindex,nLorenz,tempresult}];
 usedfunction=(-1)^nlog D[fourierMasterFunction[arg,p],{arg,nlog}];
-
 tempresult=SeriesCoefficient[usedfunction/.{arg->s+\[Epsilon]},{\[Epsilon],0,0}]//Expand;
 tempresult = If[Head[tempresult]=!=  Plus,tempresult,Select[tempresult,(MemberQ[#,Log[-p^2],Infinity])\[Or](Exponent[#,p]<0)&]];
 fun = fun/.{fourVector[x,q_]:>1,Log[-x^2]->1};
@@ -358,9 +371,9 @@ Expand[-I DLorenz[tempresult,p,slashindex]]/.{fourVector[p,slashindex]->1,slash[
 
 
 (*borel\:53d8\:6362*)
-ff[s_]:=Q^(s-4) 2^(2-s) Gamma[2-s/2]/Gamma[s/2]
-gg[s_]:=M^(s-2) 2^(2-s) 1/Gamma[s/2]
-borelTransform[Log[Q],Q,M]:=Log[Q]:> -M^2/2
+ff[s_]:=ToExpression["Q"]^(s-4) 2^(2-s) Gamma[2-s/2]/Gamma[s/2]
+gg[s_]:=ToExpression["M"]^(s-2) 2^(2-s) 1/Gamma[s/2]
+borelTransform[Log[Q_],Q_,M_]:=Log[Q]:> -M^2/2
 borelTransform[0,Q_,M_]:={q_:> q}
 borelTransform[ss_,Q_,M_]:=Module[
 {k= Exponent[ss,Q]+4,n=4,jj},
@@ -372,7 +385,7 @@ jj = jj/.{Log[q_]^l_:> m[q,0,l],Log[q_]:> m[q,0,1],1/q_^k_:> m[q,-k,0],q_^k_:> m
 jj = Solve[Table[jj[[i,1]]==jj[[i,2]],{i,1,Length[jj]}]][[1]];
 jj/.m[q_,k_,l_]:> Log[q]^l q^k//FullSimplify
 ]
-SetAttributes[fourierT,Listable]
+SetAttributes[fourierTransform,Listable]
 
 
 End[];
