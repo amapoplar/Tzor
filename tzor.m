@@ -241,7 +241,23 @@ indexNew["TZOR","EndQ"->True];
 fa[key]] 
 
 
-factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {{"a",I*(slash[knew]+mass[q])/(knew^2-mass[q]^2)}};
+factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {
+  {"a",I*slash[knew]/(knew^2-mass[q]^2)},
+  {"b",0},
+  {"c",0},
+  {"d",0},
+  {"e",0},
+  {"f",0},
+  {"g",I*mass[q]/(knew^2-mass[q]^2)},
+  {"h",0},
+  {"i",0},
+  {"j",0},
+  {"k",0},
+  {"l",0},
+  {"m",0},
+  {"n",0},
+  {"o",0},
+  {"p",0}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
