@@ -6,7 +6,7 @@ BeginPackage["Tzor`"];
 CurrentValue[$FrontEndSession, {CommonDefaultFormatTypes, "Output"}] = TraditionalForm
 Print[" Tz\[OAcute]r for ",Style["T",Red],"heori",Style["z",Red],"ed package ",Style["o",Red],"f sum ",Style["r",Red],"ules."]
 Print[" SumRules of QCD"]
-Print["Get Latest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
+Print[" Get Latest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
 Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]
 Print[" Author: poplar "]
 Print[" Version: alpha "]
@@ -237,29 +237,31 @@ factorsx[a_,b_,q_,x_,key_]:= Block[{fa},fa = {{"a",I/(2 \[Pi]^2 x^4)*delta[a,b]*
 {"m",(I)/(32 \[Pi]^2 x^2)*1/2 *(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])lambda[a,b,indexNew["\[Eta]"]]},
 {"n",(Log[-x^2] mass[q])/(32 \[Pi]^2)*lambda[a,b,indexNew["\[Eta]"]]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
 {"o",-(1/(2^6*3))hybrid[q]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
-{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}
+{"q",0}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
 
 
 factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {
-  {"a",I*slash[knew]/(knew^2-mass[q]^2)},
-  {"b",0},
+  {"a",I*slash[knew]delta[a,b]/(knew^2-mass[q]^2)},
+  {"b",-((gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(4(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
   {"c",0},
   {"d",0},
   {"e",0},
   {"f",0},
-  {"g",I*mass[q]/(knew^2-mass[q]^2)},
-  {"h",0},
+  {"g",I*mass[q]delta[a,b]/(knew^2-mass[q]^2)},
+  {"h",-((gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(2(knew^2-mass[q]^2)^2)) lambda[a,b,n]/2 mass[q]sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
   {"i",0},
-  {"j",0},
+  {"j",1/12 doubleG delta[a,b] mass[q]/(knew^2-mass[q]^2)^4 knew^2},
   {"k",0},
   {"l",0},
-  {"m",0},
+  {"m",-(1/(4(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
   {"n",0},
-  {"o",0},
-  {"p",0}};
+  {"o",-(1/(2(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 mass[q]sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
+  {"p",0},
+  {"q",1/12 doubleG delta[a,b] mass[q]^2/(knew^2-mass[q]^2)^4 slash[knew]}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
