@@ -8,7 +8,7 @@ Print[" Tz\[OAcute]r for ",Style["T",Red],"heori",Style["z",Red],"ed package ",S
 Print[" SumRules of QCD"]
 Print[" Get Latest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
 Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]
-Print[" Author: poplar "]
+Print[" Author: poplar, xlchen, zzchen, dklian"]
 Print[" Version: alpha "]
 Print[" Lastest Veresion : This Version"]
 
