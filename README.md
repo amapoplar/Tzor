@@ -11,7 +11,7 @@ Tzor is short for Theorized package of sum rules.
 In fact [Tzor](https://en.wikipedia.org/wiki/Tyre,_Lebanon) is a city in Lebanon. Tzor is her Hebrew name. Tzor had destoried and rebuilt during her about 5,000 years city history. Just like our research process, so we named the package as Tzor. 
 
 ### How to Use Tzor
-Put [tzor.m](/tzor.m) and [factors.csv](/factors.csv) in your project and your notebook and add follow code just ok.
+Put [tzor.m](/tzor.m) and [factors.csv](/factors.csv) in your project and in your notebook add follow code just ok.
 
 ```Mathematica
 Once[Get[NotebookDirectory[] <> "tzor.m"]]
