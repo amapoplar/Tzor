@@ -14,9 +14,9 @@ Print[" Lastest Veresion : This Version"]
 
 
 $IndicesLists = {li,ci}
-$MatrixAndTensorLists = {eps,delta,lambda,sigma,slash}
+$MatrixAndTensorLists = {eps,delta,lambda,sigma,slash,scalarP}
 $SpinAndColor = {spin, color, unspin, uncolor, posandflovor,lorenz}
-$SpinSpace = {fourVector,gamma,metric}
+$SpinSpace = {fourVector,gamma,metric,dim}
 $Consendate = {mass,chiral,hybrid,doubleG,tripleG}
 $porgator = {factorsx,factorsp,factorsxG,factorspG}
 
@@ -43,6 +43,8 @@ fourierTransform::usage = "caclulate the Fourier transform from x-space to p-sap
 borelTransform::usage="cacluate the Borel transform form q to M"
 gs::usage = "strong coupling"
 dimension::usage = "dimension of consedate."
+FeynAmpD::usage = "is the external form of FeynAmpDenominator and denotes an inverse propagator."
+fourierTransformConvolve::usage = "Fourier Transform Convole"
 
 
 Begin["`Private`"];
@@ -67,6 +69,17 @@ Format[chiral[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",Ov
 Format[hybrid[q_],TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",gs,OverscriptBox[q,"_"],"\[Sigma]","\[CenterDot]","G",q,"\[RightAngleBracket]"}]]
 Format[doubleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]",SuperscriptBox[gs,2],SuperscriptBox["G",2],"\[RightAngleBracket]"}]]
 Format[tripleG,TraditionalForm]:=DisplayForm[RowBox[{"\[LeftAngleBracket]","f",SuperscriptBox["G",3],"\[RightAngleBracket]"}]]
+
+
+Unprotect[Times];
+Format[PD[{q_,m_,n_}],TraditionalForm]:=DisplayForm[Superscript[RowBox[{"(",q^2-m^2,")"}],n]]
+Format[PD[{q_,m_,1}],TraditionalForm]:=DisplayForm[RowBox[{"(",q^2-m^2,")"}]]
+Format[PD[{q_,m_}],TraditionalForm]:=DisplayForm[RowBox[{"(",q^2-m^2,")"}]]
+Format[PD[q_],TraditionalForm]:=DisplayForm[RowBox[{q^2}]]
+Format[FeynAmpD[q__],TraditionalForm]:=DisplayForm[FractionBox["1",RowBox[Riffle[PD[#]&/@{q},"\[CenterDot]"]]]]
+FeynAmpD[q1__]FeynAmpD[q2__]:=FeynAmpD[q1,q2]
+SetAttributes[FeynAmpD,Orderless]
+Protect[Times];
 
 
 dimension[mass[q_]]:=1
@@ -222,46 +235,46 @@ $counts = {index=0}
 indexNew[\[Mu]_?StringQ,OptionsPattern["EndQ"-> False]]:= Module[{},If[OptionValue["EndQ"],index=index+1;ToExpression[ToString[\[Mu]]<>ToString[index-1]],ToExpression[ToString[\[Mu]]<>ToString[index]]]];
 
 
-(*x\:7a7a\:95f4\:4f20\:64ad\:5b50*)
-factorsx[a_,b_,q_,x_,key_]:= Block[{fa},fa = {{"a",I/(2 \[Pi]^2 x^4)*delta[a,b]*slash[x]},
-{"b",1/2 lambda[a,b,indexNew["\[Eta]"]]*(I gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(32 \[Pi]^2 x^2)*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
+(*x\:7a7a\:95f4\:8f7b\:5938\:514bd\:7ef4\:4f20\:64ad\:5b50*)
+(*m,n,o,p\:5bf9\:5e94\:7684\:662f\:60ac\:6302\:80f6\:5b50\:7ebf*)
+factorsx[a_,b_,q_,x_,key_]:= Block[{fa},fa = {
+{"a",(I Gamma[dim/2])/(2 \[Pi]^(dim/2) (-1)^(dim/2) (x^2)^(dim/2))*delta[a,b]*slash[x]},
+{"b",1/2 lambda[a,b,indexNew["\[Eta]"]]*(-I gs Gamma[dim/2-1] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(32 \[Pi]^(dim/2) (-1)^(dim/2-1) (x^2)^(dim/2-1))*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
 {"c",-(1/12) chiral[q]*delta[a,b]},
 {"d",1/192 x^2 hybrid[q]*delta[a,b]},
 {"e",-(I (gs^2 x^2 chiral[q]^2)/7776)*delta[a,b]*slash[x]},
 {"f",-((x^4 \[LeftAngleBracket]gs^2 "G"^2\[RightAngleBracket] chiral[q])/\!\(TraditionalForm\`27648\))*delta[a,b]},
-{"g",-(mass[q]/(4 \[Pi]^2 x^2))*delta[a,b]},
-{"h",(gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]Log[-x^2] mass[q])/(32 \[Pi]^2)*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*lambda[a,b,indexNew["\[Eta]"]]},
-{"i",-((x^2 doubleG Log[-x^2] mass[q])/(1536 \[Pi]^2))*delta[a,b]},
+{"g",(-1)^(dim/2-1) Gamma[dim/2-1] (mass[q]/(4 \[Pi]^(dim/2) (x^2)^(dim/2-1)))*delta[a,b]},
+{"h",-(gs Gamma[dim/2-2] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]](-1)^(2-dim/2) (x^2)^(2-dim/2) mass[q])/(32 \[Pi]^(dim/2))*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2*lambda[a,b,indexNew["\[Eta]"]]},
+{"i",(-1)^(3-dim/2) Gamma[dim/2-3](((x^2)^(3-dim/2) doubleG mass[q])/(1536 \[Pi]^(dim/2)))*delta[a,b]},
 {"j",1/48 I chiral[q] mass[q]*slash[x]*delta[a,b]},
 {"k",-((I x^2 hybrid[q] mass[q])/1152)*delta[a,b]*slash[x]},{"l",-((gs^2 x^4 chiral[q]^2 mass[q])/31104)*delta[a,b]},
-{"m",(I)/(32 \[Pi]^2 x^2)*1/2 *(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])lambda[a,b,indexNew["\[Eta]"]]},
-{"n",(Log[-x^2] mass[q])/(32 \[Pi]^2)*lambda[a,b,indexNew["\[Eta]"]]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
+{"m",(-I 1/2 lambda[a,b,indexNew["\[Eta]"]] Gamma[dim/2-1])/(32 \[Pi]^(dim/2) (-1)^(dim/2-1) (x^2)^(dim/2-1))*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
+{"n",-(Gamma[dim/2-2] (-1)^(2-dim/2) (x^2)^(2-dim/2) mass[q])/(32 \[Pi]^(dim/2))*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2*lambda[a,b,indexNew["\[Eta]"]]},
 {"o",-(1/(2^6*3))hybrid[q]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
-{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}
-{"q",0}};
-fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
+{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+fa = Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
 
 
 factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {
-  {"a",I*slash[knew]delta[a,b]/(knew^2-mass[q]^2)},
-  {"b",-((gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(4(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
+  {"a",I*(slash[knew]+ mass[q])delta[a,b]FeynAmpD[{knew,mass[q]}]},
+  {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,mass[q],2}]/2},
   {"c",0},
   {"d",0},
   {"e",0},
   {"f",0},
-  {"g",I*mass[q]delta[a,b]/(knew^2-mass[q]^2)},
-  {"h",-((gs GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]])/(2(knew^2-mass[q]^2)^2)) lambda[a,b,n]/2 mass[q]sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
+  {"g",0},
+  {"h",0},
   {"i",0},
-  {"j",1/12 doubleG delta[a,b] mass[q]/(knew^2-mass[q]^2)^4 knew^2},
+  {"j",I*doubleG delta[a,b] mass[q] (knew^2+mass[q] slash[knew])FeynAmpD[{knew,mass[q],4}]/12},
   {"k",0},
   {"l",0},
-  {"m",-(1/(4(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
+  {"m",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,mass[q],2}]/8},
   {"n",0},
-  {"o",-(1/(2(knew^2-mass[q]^2)^2)) lambda[a,b,indexNew["\[Eta]"]]/2 mass[q]sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]},
-  {"p",0},
-  {"q",1/12 doubleG delta[a,b] mass[q]^2/(knew^2-mass[q]^2)^4 slash[knew]}};
+  {"o",0},
+  {"p",0}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
@@ -359,6 +372,7 @@ WriteString["stdout",ToString[part1,TeXForm]]
 
 
 (*\:56db\:77e2\:548c\:5ea6\:89c4\:7684\:683c\:5f0f*)
+Format[dim,TraditionalForm]:=DisplayForm[ToExpression["D"]]
 Format[fourVector[v_,index_],TraditionalForm]:=DisplayForm[Subscript[v,index]]
 Format[metric[index1_,index2_],TraditionalForm]:=DisplayForm[Subscript["g",RowBox[{index1,index2}]]]
 Format[gamma[index_],TraditionalForm]:=DisplayForm[Superscript["\[Gamma]",index]]
@@ -368,26 +382,40 @@ DLorenz[fourVector[x_,index1_],x_,index2_]:=metric[index1,index2]
 DLorenz[metric[index1_,index2_],x_,index3_]:=0
 DLorenz[fun1_ fun2_,x0_,index_]:=DLorenz[fun1,x0,index]fun2+fun1 DLorenz[fun2,x0,index]
 DLorenz[fun1_ +fun2_,x0_,index_]:=DLorenz[fun1,x0,index]+DLorenz[fun2,x0,index]
-DLorenz[fun0_?(!MemberQ[#,fourVector]&),x0_,index_]:=Module[{\[Nu] = Exponent[fun0,x0]},If[\[Nu]==2,2 fourVector[x0,index],(D[fun0/.{x0->Sqrt[x0]},x0]/.{x0->x0^2})DLorenz[x0^2,x0,index]]]
+DLorenz[fun0_?(!MemberQ[#,fourVector]&),x0_,index_]:=Module[{\[Nu] = Exponent[fun0,x0]},2(D[fun0/.{x0->Sqrt[x0]},x0]/.{x0->x0^2})fourVector[x0,index]]
 (*\:8f85\:52a9\:51fd\:6570*)
 giveIndice[fourVector[a_,index_],a_]:=index
 giveIndice[a_,x_]:=Nothing
 giveIndice[a_ b_,x_]:=Flatten[{giveIndice[a,x],giveIndice[b,x]}]
 
 (*\:5085\:91cc\:53f6\:4e3b\:79ef\:5206\:51fd\:6570*)
-fourierMasterFunction[s_,q_]:=- I 2^(4-2s) \[Pi]^2 (-q^2)^(s-2) Gamma[2-s]/Gamma[s]
+fourierMasterFunction[s_,q_]:=-I 2^(dim-2s) \[Pi]^(dim/2) (-q^2)^(s-dim/2) Gamma[dim/2-s]/Gamma[s]
 (*\:5085\:91cc\:53f6\:53d8\:6362*)
 fourierTransform[a_?NumericQ,x0_,p0_]:=a (2\[Pi])^4 delta[p0]
 fourierTransform[func1_+func2_,x0_,p0_]:=fourierTransform[func1,x0,p0]+fourierTransform[func2,x0,p0]
-fourierTransform[func0_,x0_,p0_]:=Module[{fun = func0,s=-Exponent[func0,x0]/2,x=x0,p=p0,nslash = MemberQ[func0,slash[x0],Infinity],nlog =Exponent[func0,Log[-x0^2]],slashindex = Nothing,nLorenz =giveIndice[func0,x0] ,tempresult=0,usedfunction = fourierMasterFunction,arg},
-usedfunction=(-1)^nlog D[fourierMasterFunction[arg,p],{arg,nlog}];
-tempresult=SeriesCoefficient[usedfunction/.{arg->s+\[Epsilon]},{\[Epsilon],0,0}]//Expand;
-tempresult = If[Head[tempresult]=!=  Plus,tempresult,Select[tempresult,(MemberQ[#,Log[-p^2],Infinity])\[Or](Exponent[#,p]<0)&]];
-fun = fun/.{fourVector[x,q_]:>1,Log[-x^2]->1};
-tempresult = If[Length[nLorenz]>0,Fold[ Expand[-I DLorenz[#1,p,#2]]&,tempresult*(-x^2)^s*fun,nLorenz ],tempresult*(-x^2)^s*fun];
-If[nslash,slashindex = ToExpression["\[Alpha]"<>Fold[StringDelete,DateString[],{" ",":"}]];
-Expand[-I DLorenz[tempresult,p,slashindex]]/.{fourVector[p,slashindex]->1,slash[x]-> slash[p],metric[index_,slashindex]:>  gamma[index]},tempresult ]
+fourierTransform[func0_,x0_,p0_]:=Module[{fun = func0,s=-Exponent[func0,x0]/2,x=x0,p=p0,slashQ = MemberQ[func0,slash[x0],Infinity],slashindex = Nothing,nLorenz =giveIndice[func0,x0] ,tempresult=0},
+tempresult= fourierMasterFunction[s,p]//Expand;
+fun = fun/.{fourVector[x,q_]:>1,x->1};
+tempresult = If[Length[nLorenz]>0,Fold[ Expand[-I DLorenz[#1,p,#2]]&,tempresult*fun,nLorenz ],tempresult*fun];
+If[slashQ,slashindex = ToExpression["\[Alpha]"<>Fold[StringDelete,DateString[],{" ",":"}]];
+Expand[-I DLorenz[tempresult,p,slashindex]]/.{fourVector[p,slashindex]->1,slash[1]-> slash[p],metric[index_,slashindex]:>  gamma[index]},tempresult ]
 ]
+
+
+(*\:5085\:91cc\:53f6\:5377\:79ef*)
+Format[scalarP[x_,p_],TraditionalForm]:=DisplayForm[RowBox[{x,"\[CenterDot]",p}]]
+momentum[FeynAmpD[a_]]:=First[a]
+momentum[FeynAmpD[a_,b__]]:=momentum[FeynAmpD[a]]+momentum[FeynAmpD[b]]
+momentum[a_ b_]:=momentum[a]+momentum[b]
+momentum[a_]:=0
+fourierTransformConvolve[exp_,x_,p_]:= Module[{exp0=exp,j = 0, kinternal = momentum[exp],\[Nu]=0},
+exp0 = exp0/.scalarP[x,k_]:> fourVector[x,indexNew["\[Mu]"<>ToString[j=j+1]]]fourVector[k,indexNew["\[Mu]"<>ToString[j]]];
+exp0 = fourierTransform[exp0,x,p];
+\[Nu] = Exponent[exp0,p];
+exp0 = exp0//.{fourVector[k_,n_]fourVector[l_,n_]:>scalarP[k,l],metric[a_,b_]fourVector[l_,a_]fourVector[k_,b_]:>scalarP[l,k]};
+exp0/.{p->p-kinternal}
+]
+
 
 
 (*borel\:53d8\:6362*)
