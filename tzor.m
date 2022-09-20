@@ -5,11 +5,10 @@ BeginPackage["Tzor`"];
 
 CurrentValue[$FrontEndSession, {CommonDefaultFormatTypes, "Output"}] = TraditionalForm
 Print[" Tz\[OAcute]r for ",Style["T",Red],"heori",Style["z",Red],"ed package ",Style["o",Red],"f sum ",Style["r",Red],"ules."]
-Print[" SumRules of QCD"]
-Print[" Get Latest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
+Print[" Get Lastest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
 Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]
-Print[" Author: poplar, xlchen, zzchen, dklian"]
-Print[" Version: alpha "]
+Print[" Author : poplar, xlchen, zzchen, dklian"]
+Print[" Version : alpha "]
 Print[" Lastest Veresion : This Version"]
 
 
