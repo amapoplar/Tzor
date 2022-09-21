@@ -1,2 +1,3 @@
 /tzor
-/tzor/main.pdf
+!/tzor/main.pdf
+.gitignore

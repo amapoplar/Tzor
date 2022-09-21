@@ -18,6 +18,7 @@ $SpinAndColor = {spin, color, unspin, uncolor, posandflovor,lorenz}
 $SpinSpace = {fourVector,gamma,metric,dim}
 $Consendate = {mass,chiral,hybrid,doubleG,tripleG}
 $porgator = {factorsx,factorsp,factorsxG,factorspG}
+$heavyQuarks = {ToExpression["b"],ToExpression["c"],ToExpression["Q"]}
 
 
 QField::usage = "QuarkQField[f,a,\[Alpha],x] is a flavor f quark filed at postion x with color a and Lonrtez index \[Alpha]";
@@ -298,14 +299,14 @@ $hangGluon ={"m","n","o","p"}
 (*\:4f20\:64ad\:5b50\:66ff\:6362*)
 colrelator[]:=1
 colrelatorG[]:=1
-replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> {ToExpression["b"],ToExpression["c"],ToExpression["Q"]},"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
+replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> $heavyQuarks,"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
 replace[cont_,digq_,digg_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,digg,"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
 replaces[cont_,digq_?ListQ,digg_?ListQ, OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]]:=Module[{func =  cont,mydig = digq,mydigg = digg,j=0,k = 0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
 lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
 ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
 ps = ps/.GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]]:> colrelatorG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x-y,k=k+1];
-ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,ToExpression["k"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
-If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,ToExpression["k"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
+ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
+If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
 ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
 colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
 lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
