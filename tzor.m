@@ -147,6 +147,7 @@ Trans[Trans[a_]]:= a
 Trans[a_+b_]:= Trans[a]+Trans[b]
 Trans[a_ b_?CQ]:=b Trans[a]
 Trans[1]:= 1
+Trans[mass[q_]]:= mass[q]
 Trans[a_?NumberQ]:= a
 Track[a_?CQ b_]:= a Track[b]
 
@@ -404,6 +405,10 @@ Expand[-I DLorenz[tempresult,p,slashindex]]/.{fourVector[p,slashindex]->1,slash[
 
 (*\:5085\:91cc\:53f6\:5377\:79ef*)
 Format[scalarP[x_,p_],TraditionalForm]:=DisplayForm[RowBox[{x,"\[CenterDot]",p}]]
+scalarP[x_,x_]:=x^2
+scalarP[x1_+x2_,x_]:=scalarP[x1,x]+scalarP[x2,x]
+scalarP[-x1_,x2_]:=-scalarP[x1,x2]
+SetAttributes[scalarP,Orderless]
 momentum[FeynAmpD[a_]]:=First[a]
 momentum[FeynAmpD[a_,b__]]:=momentum[FeynAmpD[a]]+momentum[FeynAmpD[b]]
 momentum[a_ b_]:=momentum[a]+momentum[b]
