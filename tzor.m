@@ -259,7 +259,7 @@ indexNew["TZOR","EndQ"->True];
 fa[key]] 
 
 
-factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = indexNew[ToString[k]]},fa = {
+factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
   {"a",I*(slash[knew]+ mass[q])delta[a,b]FeynAmpD[{knew,mass[q]}]},
   {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,mass[q],2}]/2},
   {"c",0},
@@ -287,7 +287,7 @@ indexNew["TZOR","EndQ"->True];
 fa[key]]
 
 
-factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,k_,key_]:=Block[{fa,knew = indexNew[ToString[k]]},fa ={{"a",knew}};
+factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,k_,key_]:=Block[{fa,knew = k},fa ={{"a",knew}};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]]
@@ -302,12 +302,12 @@ colrelator[]:=1
 colrelatorG[]:=1
 replace[cont_,digq_,OptionsPattern[{"HeavyQuarks"-> $heavyQuarks,"MomentumSpaceG"-> False}]] := replaces[cont,digq,{"a"},"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
 replace[cont_,digq_,digg_,OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]] := replaces[cont,digq,digg,"HeavyQuarks"->OptionValue["HeavyQuarks"],"MomentumSpaceG"->OptionValue["MomentumSpaceG"]]
-replaces[cont_,digq_?ListQ,digg_?ListQ, OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]]:=Module[{func =  cont,mydig = digq,mydigg = digg,j=0,k = 0,ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
+replaces[cont_,digq_?ListQ,digg_?ListQ, OptionsPattern[{"HeavyQuarks"-> {},"MomentumSpaceG"-> False}]]:=Module[{func =  cont,mydig = digq,mydigg = digg,j=0,k = 0,n= 0, m = 0, ps = 1,colorin = Flatten[color[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],
 lorenin = Flatten[lorenz[First@Transpose[FactorList[cont/.{Dot->Times,Trans->Times,Track->Times}]]]],colorout = {},lorenout = {}},
 ps = cont/.DE[{q_,q_},{y_,x_}][ci[{ci1_,ci2_}]]:> colrelator[q,x-y,ci1,ci2,j=j+1];
 ps = ps/.GE[GField[n1_,x_][li[{\[Mu]1_,\[Nu]1_}]],GField[n2_,y_][li[{\[Mu]2_,\[Nu]2_}]]]:> colrelatorG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x-y,k=k+1];
-ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
-If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
+ps = ps/.{colrelator[q_?(MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsp[ci1,ci2, q,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"<>ToString[m=m+1]],mydig[[l]]],colrelator[q_?(!MemberQ[OptionValue["HeavyQuarks"],#]&),x_,ci1_,ci2_,l_]:>factorsx[ci1,ci2, q,x,mydig[[l]]]};
+If[OptionValue["MomentumSpaceG"]===True,ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorspG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,If[NumberQ[First[Level[#,{0,Infinity}]]],-1,1]&[x]ToExpression["k"<>ToString[n=n+1]],mydigg[[m]]],ps =ps/.colrelatorG[n1_,n2_,\[Mu]1_,\[Mu]2_,\[Nu]1_,\[Nu]2_,x_,m_]:> factorsxG[n1,n2,\[Mu]1,\[Mu]2,\[Nu]1,\[Nu]2,x,mydigg[[m]]]];
 ps = ps//.{Dot[a___,b_?NumericQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?NumericQ ,d___]:>b Dot[a,d],Dot[a___,b_?CQ c_,d___]:> b Dot[a,c,d],Dot[a___,b_?CQ,c___]:> b Dot[a,c]};
 colorout= Complement[Flatten[color[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],colorin];
 lorenout = Complement[Flatten[lorenz[First@Transpose[FactorList[ps/.{Dot->Times,Trans->Times,Track->Times}]]]],lorenin];
@@ -408,6 +408,9 @@ Format[scalarP[x_,p_],TraditionalForm]:=DisplayForm[RowBox[{x,"\[CenterDot]",p}]
 scalarP[x_,x_]:=x^2
 scalarP[x1_+x2_,x_]:=scalarP[x1,x]+scalarP[x2,x]
 scalarP[-x1_,x2_]:=-scalarP[x1,x2]
+Unprotect[Dot]
+scalarP[k1_,k2_].scalarP[k3_,k4_]:= scalarP[k1,k2]scalarP[k3,k4]
+Protect[Dot]
 SetAttributes[scalarP,Orderless]
 momentum[FeynAmpD[a_]]:=First[a]
 momentum[FeynAmpD[a_,b__]]:=momentum[FeynAmpD[a]]+momentum[FeynAmpD[b]]
@@ -416,11 +419,11 @@ momentum[a_]:=0
 fourierTransformConvolve[exp_,x_,p_]:= Module[{exp0=exp,j = 0, kinternal = momentum[exp],\[Nu]=0},
 exp0 = exp0/.scalarP[x,k_]:> fourVector[x,indexNew["\[Mu]"<>ToString[j=j+1]]]fourVector[k,indexNew["\[Mu]"<>ToString[j]]];
 exp0 = fourierTransform[exp0,x,p];
-\[Nu] = Exponent[exp0,p];
+exp0 = exp0/.{(-p^2)^n_:> (-1)^n FeynAmpD[{p,0,n}],(-p^2):> (-1)FeynAmpD[p]};
+
 exp0 = exp0//.{fourVector[k_,n_]fourVector[l_,n_]:>scalarP[k,l],metric[a_,b_]fourVector[l_,a_]fourVector[k_,b_]:>scalarP[l,k]};
 exp0/.{p->p-kinternal}
 ]
-
 
 
 (*borel\:53d8\:6362*)
