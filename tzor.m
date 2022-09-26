@@ -45,6 +45,9 @@ gs::usage = "strong coupling"
 dimension::usage = "dimension of consedate."
 FeynAmpD::usage = "is the external form of FeynAmpDenominator and denotes an inverse propagator."
 fourierTransformConvolve::usage = "Fourier Transform Convole"
+momentum
+diracDelta
+sig
 
 
 Begin["`Private`"];
@@ -78,6 +81,7 @@ Format[PD[{q_,m_}],TraditionalForm]:=DisplayForm[RowBox[{"(",q^2-m^2,")"}]]
 Format[PD[q_],TraditionalForm]:=DisplayForm[RowBox[{q^2}]]
 Format[FeynAmpD[q__],TraditionalForm]:=DisplayForm[FractionBox["1",RowBox[Riffle[PD[#]&/@{q},"\[CenterDot]"]]]]
 FeynAmpD[q1__]FeynAmpD[q2__]:=FeynAmpD[q1,q2]
+FeynAmpD[]:=1
 SetAttributes[FeynAmpD,Orderless]
 Protect[Times];
 
@@ -210,7 +214,7 @@ SetAttributes[{color,spin,posandflovor,lorenz},Listable]
 givePointsByEdge[UndirectedEdge[a_,b_]]:= {a,b}
 SetAttributes[givePointsByEdge,Listable]
 TransQ[h_]:=Head[h]==Trans
-Tracktemp[Dot[conj__]]:=If[MatchQ[Table[conj [[i]],{i,Length[conj]}],{__?TransQ}],Track[Dot@@Table[Trans[conj [[i]]],{i,Length[conj]}]],Track[Dot@@RotateLeft[#,Position[ProgQ[#],True][[1,1]]-1]&@Table[conj [[i]],{i,Length[conj]}]]]
+Tracktemp[Dot[conj__]]:=If[MatchQ[Table[conj [[i]],{i,Length[conj]}],{__?TransQ}],Track[Dot@@Table[Trans[Reverse[conj][[i]]],{i,Length[conj]}]],Track[Dot@@RotateLeft[#,Position[ProgQ[#],True][[1,1]]-1]&@Table[conj [[i]],{i,Length[conj]}]]]
 findMatrixsWithIndex[list_,index_]:=Union[Select[list,SameQ[spin[#],index]&],Trans/@Select[list,SameQ[spin[#],Reverse[index]]&]]
 traceContract[mycon_]:=Module[{mylist= Transpose[FactorList[mycon]][[1]],fac= Times@@Transpose[FactorList[mycon]][[2]]},
 fac = fac*Times@@Select[mylist,spin[#]===Nothing&];
@@ -260,7 +264,7 @@ fa[key]]
 
 
 factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
-  {"a",I*(slash[knew]+ mass[q])delta[a,b]FeynAmpD[{knew,mass[q]}]},
+  {"a",I*(slash[knew]+ mass[q])delta[a,b]FeynAmpD[{knew,mass[q],1}]},
   {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,mass[q],2}]/2},
   {"c",0},
   {"d",0},
@@ -412,7 +416,8 @@ Unprotect[Dot]
 scalarP[k1_,k2_].scalarP[k3_,k4_]:= scalarP[k1,k2]scalarP[k3,k4]
 Protect[Dot]
 SetAttributes[scalarP,Orderless]
-momentum[FeynAmpD[a_]]:=First[a]
+momentum[FeynAmpD[a_?ListQ]]:=First[a]
+momentum[FeynAmpD[a_]]:=a
 momentum[FeynAmpD[a_,b__]]:=momentum[FeynAmpD[a]]+momentum[FeynAmpD[b]]
 momentum[a_ b_]:=momentum[a]+momentum[b]
 momentum[a_]:=0
@@ -424,6 +429,11 @@ exp0 = exp0/.{(-p^2)^n_:> (-1)^n FeynAmpD[{p,0,n}],(-p^2):> (-1)FeynAmpD[p]};
 exp0 = exp0//.{fourVector[k_,n_]fourVector[l_,n_]:>scalarP[k,l],metric[a_,b_]fourVector[l_,a_]fourVector[k_,b_]:>scalarP[l,k]};
 exp0/.{p->p-kinternal}
 ]
+
+
+(*\:8272\:6563\:5173\:7cfb\:8fed\:4ee3*)
+Format[diracDelta[list__],TraditionalForm]:=DisplayForm[RowBox[Flatten[{"\[Delta]","(",Riffle[Flatten[{list}],"+"],")"}]]]
+sig[a_]:=If[NumberQ[First[Flatten[Level[a,{0,Infinity}]]]],-1,1];
 
 
 (*borel\:53d8\:6362*)
