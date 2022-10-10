@@ -7,7 +7,7 @@ IBindex::usage = "IBindex with indices is Im of Bubble."
 Begin["`Private`"]
 
 
-IB[0,0,m1_,m2_,s_,q_] := 1
+IB[0,0,m1_,m2_,s_,q_] := 0
 IB[0,1,m1_,m2_,s_,q_] := 0
 IB[0,2,m1_,m2_,s_,q_] := 0
 IB[0,3,m1_,m2_,s_,q_] := 0
