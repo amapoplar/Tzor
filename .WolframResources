@@ -1,0 +1,8 @@
+Resources[
+    Version[1],
+    ExecutionBuildCommand["<<tzor`"],
+    Paclet[
+        PacletFolder["tzor"],
+        FunctionPaclet[False]
+    ]
+]
