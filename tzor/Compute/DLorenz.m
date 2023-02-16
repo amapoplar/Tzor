@@ -10,10 +10,10 @@ Begin["`Piravte`"]
 DLorenz[fourVector[x_,index1_],x_,index2_] := metric[index1,index2]
 DLorenz[metric[index1_,index2_],x_,index3_] := 0
 DLorenz[fun1_ fun2_,x0_,index_]:=DLorenz[fun1,x0,index]fun2+fun1 DLorenz[fun2,x0,index]
-
+DLorenz[fun_^n_,x_,index_]:= n fun^(n-1) DLorenz[fun,x,index]
 DLorenz[fun1_ +fun2_,x0_,index_]:=DLorenz[fun1,x0,index]+DLorenz[fun2,x0,index]
-DLorenz[fun0_^n_,x0_,index_]:=
-	Module[{},2(D[(fun0^n)/.{x0->Sqrt[x0]},x0]/.{x0->x0^2})fourVector[x0,index]]
+DLorenz[x0_^n_,x0_,index_]:=
+	Module[{},2(D[(x0^n)/.{x0->Sqrt[x0]},x0]/.{x0->x0^2})fourVector[x0,index]]
 	DLorenz[a_?NumberQ,q_,\[Mu]_]:=0
 DLorenz[k_,q_,\[Mu]_]:=0
 DLorenz[slash[x_],x_,\[Mu]_]:= gamma[\[Mu]]

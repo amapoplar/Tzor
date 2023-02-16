@@ -45,12 +45,13 @@ erros = 1,erromassages = {},qtemps = 0,gtemps = 0,res = 0},
 		//.tempT[arg1___,QField[q1_,ci1_,si1_,x_],QFieldB[q2_,ci2_,si2_,y_],arg2___]:> I DE[{q1,q2},{y,x}][ci[{ci1,ci2}],si[{si1,si2}]]*tempT[arg1,arg2])
 		/.{DE[{ferm1_, ferm2_}, __][___] /; ferm1 =!= ferm2 :>  0,
 	DE[{___}, {x_,y_}][___] /; x ===y  :>  0};
-	If[Length[gluons]=!= 0, 
+
+	If[gluons =!= {}, 
 		Plus@@(qtemps*tempT@@@(Riffle[First[gluons],#]&/@Permutations[Last[gluons]])
-		//.tempT[arg1___,GField[n1_,x_][li[{si1_,si2_}]],
-		GField[n2_,y_][li[{si3_,si4_}]],arg2___]:> I GE[GField[n1,x][li[{si1,si2}]],
-		GField[n2,y][li[{si3,si4}]]]*tempT[arg1,arg2])/.{GE[GField[_,x_][___],GField[_,y_][___]]/;x===y:>  0},
-		Plus@@qtemps]
+		//.tempT[arg1___,GField[n1_,x_][li[{si1_,si2_}]],GField[n2_,y_][li[{si3_,si4_}]],arg2___]
+				:> I GE[GField[n1,x][li[{si1,si2}]], GField[n2,y][li[{si3,si4}]]]*tempT[arg1,arg2])
+				/.{GE[GField[_,x_][___],GField[_,y_][___]]/;x===y:>  0},
+		qtemps]
 ];
 
 
@@ -64,6 +65,8 @@ Tracktemp[Dot[conj__]]:=
 		Track[Dot@@Table[Trans[Reverse[conj][[i]]],{i,Length[conj]}]],
 		Track[Dot@@RotateLeft[#,Position[ProgQ[#],True][[1,1]]-1]&@Table[conj [[i]],{i,Length[conj]}]]]
 findMatrixsWithIndex[list_,index_]:=Union[Select[list,SameQ[spin[#],index]&],Trans/@Select[list,SameQ[spin[#],Reverse[index]]&]]
+
+traceContract[exp1_+exp2_]:=traceContract[exp1]+traceContract[exp2]
 
 traceContract[mycon_]:=Module[{mylist= Transpose[FactorList[mycon]][[1]],fac= Times@@Transpose[FactorList[mycon]][[2]]},
 

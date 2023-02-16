@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-$MatrixAndTensorLists = {epslion,delta,lambda,deltaAdj,structF}
+$MatrixAndTensorLists = {epsilon,delta,lambda,deltaAdj,structF}
 
 
 NColorFactors::usage = "caculate the value of color factors"
@@ -10,7 +10,7 @@ Begin["`Private`"]
 
 
 (*epsilon\:4e0edelta\:7684\:6837\:5f0f*)
-Format[epslion[a_, b_, c_], TraditionalForm] := 
+Format[epsilon[a_, b_, c_], TraditionalForm] := 
 DisplayForm[SuperscriptBox["\[Epsilon]", RowBox[{a, b, c}]]]
 Format[delta[a_, b_], TraditionalForm] := 
 DisplayForm[SuperscriptBox["\[Delta]", RowBox[{a, b}]]]
@@ -29,7 +29,7 @@ color[a_[si[si_],ci[ci_]]]:=ci
 color[a_[si[si_]]]:= Nothing
 color[delta[a_,b_]]:={a,b}
 color[deltaAdj[a_,b_]]:={a,b}
-color[epslion[a_,b_,c_]]:={a,b,c}
+color[epsilon[a_,b_,c_]]:={a,b,c}
 color[lambda[a_,b_,n_]]:={a,b,n}
 color[structF[a_,b_,c_]]:={a,b,c}
 color[Trans[a_]]:=Reverse[color[a]]
@@ -39,7 +39,7 @@ uncolor[con_]:=Module[{cons = con},cons /.{a_[ci[ci_]]:>a,DE[a__][ci[ci_],si[sis
 
 parameter[delta[a_, b_]]:={{a,3},{b,3}}
 parameter[deltaAdj[a_, b_]]:={{a,8},{b,8}}
-parameter[epslion[a_,b_,c_]]:={{a,3},{b,3},{c,3}}
+parameter[epsilon[a_,b_,c_]]:={{a,3},{b,3},{c,3}}
 parameter[lambda[a_,b_,n_]]:={{a,3},{b,3},{n,8}}
 parameter[structF[a_, b_, c_]]:= {{a,8},{b,8},{c,8}}
 parameters[f_]:=parameter[f]
@@ -66,7 +66,7 @@ sF
 
 sF = 1/(4I) Table[Sum[Gellman[[b,i,j]]Gellman[[c,j,k]]Gellman[[a,k,i]]-Gellman[[c,i,j]]Gellman[[b,j,k]]Gellman[[a,k,i]],{i,3},{j,3},{k,3}],{a,8},{b,8},{c,8}];
 log = \!\(TraditionalForm\`File[FileNameJoin[{$ColorCalcDirectory, filename}]]\);
-expused = expused/.{epslion[a_,b_,c_]:> eps[[a,b,c]],delta[a_,b_]:> del[[a,b]],lambda[a_,b_,n_]:>Gellman[[n,a,b]],deltaAdj[a_, b_]:> deladj[[a,b]],structF[a_,b_,c_]:> sF[[a,b,c]]};
+expused = expused/.{epsilon[a_,b_,c_]:> eps[[a,b,c]],delta[a_,b_]:> del[[a,b]],lambda[a_,b_,n_]:>Gellman[[n,a,b]],deltaAdj[a_, b_]:> deladj[[a,b]],structF[a_,b_,c_]:> sF[[a,b,c]]};
 
 expused = Fold[Sum[#1,#2]&,expused,indexOfSum];
 OpenAppend[log];
@@ -81,7 +81,7 @@ NColorFactors[Times[ factor_,factor1__]]:= Block[{ fac =SortBy[Select[{factor,fa
 	
 	facs = Association[Table[facs[[i,1]]->facs[[i,2]],{i,Length[facs]}]];
 	
-	str = ToString[Join[Select[fac,Head[#]===epslion&],Select[fac,Head[#]=!=epslion&]]];
+	str = ToString[Join[Select[fac,Head[#]===epsilon&],Select[fac,Head[#]=!=epsilon&]]];
 	If[!KeyExistsQ[facs, Hash[str]],caculateColor[Hash[str],Times@@fac]*fac1,facs[Hash[str]]fac1]
 ]//Quiet
 SetAttributes[NColorFactors,Listable]

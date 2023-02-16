@@ -74,7 +74,7 @@ factorsx[a_,b_,q_,x_,key_]:= Block[{fa},fa = {
 	{"m",(-I 1/2 lambda[a,b,indexNew["\[Eta]"]] Gamma[dim/2-1])/(32 \[Pi]^(dim/2) (-1)^(dim/2-1) (x^2)^(dim/2-1))*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])},
 	{"n",-(Gamma[dim/2-2] (-1)^(2-dim/2) (x^2)^(2-dim/2) mass[q])/(32 \[Pi]^(dim/2))*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2*lambda[a,b,indexNew["\[Eta]"]]},
 	{"o",-(1/(2^6*3))hybrid[q]*sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]*1/2 lambda[a,b,indexNew["\[Eta]"]]},
-	{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
+	{"p",(I mass[q])/(2^8*3) hybrid[q]*(sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[x]+slash[x] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]])*1/2 lambda[a,b,indexNew["\[Eta]"]]}};
 fa = Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]] 
@@ -82,7 +82,7 @@ fa[key]]
 
 lfactorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
   {"a",I*(slash[knew])delta[a,b]FeynAmpD[{knew,0,1}]},
-  {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,0,2}]/2},
+  {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[knew]+slash[knew] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,0,2}]/2},
   {"c",0},
   {"d",0},
   {"e",0},
@@ -93,7 +93,7 @@ lfactorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
   {"j",0},
   {"k",0},
   {"l",0},
-  {"m",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].slash[knew]+slash[knew].sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,0,2}]/8},
+  {"m",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . slash[knew]+slash[knew] . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,0,2}]/8},
   {"n",0},
   {"o",-I gs mass[q](sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,0,2}]/4},
   {"p",0}};
@@ -104,7 +104,7 @@ fa[key]]
 
 factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
   {"a",I*(slash[knew]+ mass[q])delta[a,b]FeynAmpD[{knew,mass[q],1}]},
-  {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,mass[q],2}]/2},
+  {"b",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . (mass[q]+slash[knew])+(mass[q]+slash[knew]) . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]] GField[indexNew["\[Eta]"],0][li[{indexNew["\[Mu]"],indexNew["\[Nu]"]}]]FeynAmpD[{knew,mass[q],2}]/2},
   {"c",0},
   {"d",0},
   {"e",0},
@@ -115,7 +115,7 @@ factorsp[a_,b_,q_,k_,key_]:= Block[{fa, knew = k},fa = {
   {"j",0},
   {"k",0},
   {"l",0},
-  {"m",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]].(mass[q]+slash[knew])+(mass[q]+slash[knew]).sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,mass[q],2}]/8},
+  {"m",-I gs (sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]] . (mass[q]+slash[knew])+(mass[q]+slash[knew]) . sigma[indexNew["\[Mu]"],indexNew["\[Nu]"]]) lambda[a,b,indexNew["\[Eta]"]]FeynAmpD[{knew,mass[q],2}]/8},
   {"n",0},
   {"o",0},
   {"p",0}};
@@ -131,7 +131,17 @@ fa[key]]
 
 
 factorspG[a_,b_,\[Mu]1_,\[Nu]1_,\[Mu]2_,\[Nu]2_,k_,key_]:=Block[{fa,p = k,\[Mu] = \[Mu]1, \[Nu] = \[Nu]1,\[Alpha] = \[Mu]2, \[Beta] = \[Nu]2},
-	fa ={{"a",-I deltaAdj[a,b]FeynAmpD[{p,0,1}](fourVector[p,\[Mu]]fourVector[p,\[Alpha]]metric[\[Nu],\[Beta]]-fourVector[p,\[Nu]]fourVector[p,\[Alpha]]metric[\[Mu],\[Beta]]-fourVector[p,\[Mu]]fourVector[p,\[Beta]]metric[\[Nu],\[Alpha]]+fourVector[p,\[Nu]]fourVector[p,\[Beta]]metric[\[Mu],\[Alpha]])}};
+	fa ={
+	{"a",-I deltaAdj[a,b]FeynAmpD[{p,0,1}](fourVector[p,\[Mu]]fourVector[p,\[Alpha]]metric[\[Nu],\[Beta]]-fourVector[p,\[Nu]]fourVector[p,\[Alpha]]metric[\[Mu],\[Beta]]-fourVector[p,\[Mu]]fourVector[p,\[Beta]]metric[\[Nu],\[Alpha]]+fourVector[p,\[Nu]]fourVector[p,\[Beta]]metric[\[Mu],\[Alpha]])},
+	{"b",-(1/96) doubleG deltaAdj[a,b] (metric[\[Alpha],\[Nu]] metric[\[Beta],\[Mu]]-metric[\[Alpha],\[Mu]] metric[\[Beta],\[Nu]])},
+	{"c",3/32*I*gs^2*doubleG*deltaAdj[a,b]FeynAmpD[{p,0,2}](metric[\[Alpha],\[Nu]]metric[\[Beta],\[Mu]]-metric[\[Alpha],\[Mu]]metric[\[Beta],\[Nu]])-I/16*gs^2*doubleG*deltaAdj[a,b]FeynAmpD[{p,0,3}](fourVector[p,\[Alpha]]fourVector[p,\[Mu]]metric[\[Beta],\[Nu]]-fourVector[p,\[Beta]]fourVector[p,\[Mu]]metric[\[Alpha],\[Nu]]-fourVector[p,\[Alpha]]fourVector[p,\[Nu]]metric[\[Beta],\[Mu]]+fourVector[p,\[Beta]]fourVector[p,\[Nu]]metric[\[Alpha],\[Mu]])},
+	{"d",1/384*gs*tripleG*deltaAdj[a,b] x^2(metric[\[Alpha],\[Mu]]metric[\[Beta],\[Nu]]-metric[\[Alpha],\[Nu]]metric[\[Beta],\[Mu]])},
+	{"e",1/(2^4 3^4)*gs^2*deltaAdj[a,b]chiral[q]^2 x^2 (metric[\[Alpha],\[Mu]]metric[\[Beta],\[Nu]]-metric[\[Alpha],\[Nu]]metric[\[Beta],\[Mu]])+
+1/(2^4 3^4)*gs^2*deltaAdj[a,b]chiral[q]^2 (fourVector[x,\[Alpha]]fourVector[x,\[Mu]]metric[\[Beta],\[Nu]]-
+fourVector[x,\[Beta]]fourVector[x,\[Mu]]metric[\[Alpha],\[Nu]]-
+fourVector[x,\[Alpha]]fourVector[x,\[Nu]]metric[\[Beta],\[Mu]]+
+fourVector[x,\[Beta]]fourVector[x,\[Nu]] metric[\[Alpha],\[Mu]])}
+	};
 fa= Association[Table[fa[[i,1]]-> fa[[i,2]],{i,Length[fa]}]];
 indexNew["TZOR","EndQ"->True];
 fa[key]]
