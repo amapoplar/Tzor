@@ -23,7 +23,8 @@ some [_examples_](example.nb)
 
 #### a manual
 
-[_manual in language of English_](Manual/main.pdf)
+[_pdf manual_](Manual/main.pdf)
+[_online manual_](Manual/man.md)
 
 
 ## Connect me
