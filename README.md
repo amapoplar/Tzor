@@ -19,6 +19,8 @@ Once[Get[NotebookDirectory[] <> "tzor.m"]]
 ```
 #### a quikly start
 some [_examples_](example.nb)
+
+some [_details_](details.nb)
 under development...
 #### a manual
 
