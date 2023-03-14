@@ -2,7 +2,6 @@
 Tzor is a Mathematicia Package for  QCD Sum rules
 # Tzor
 Tzor is a Mathematicia Package for  QCD Sum rules.
-
 ## QCD Sum Rules
 QCD sum rules is a tools to caculate nonperturtive QCD. It need to caculate lots of Feynmann diagram. And Tzor will help us to simplify caculation procession.
 
@@ -20,13 +19,11 @@ Once[Get[NotebookDirectory[] <> "tzor.m"]]
 ```
 #### a quikly start
 some [_examples_](example.nb)
-
+under development...
 #### a manual
 
 [_pdf manual_](Manual/main.pdf)
-
-[_online manual_](Manual/man.md)
-
+under development...
 
 ## Connect me
 :e-mail:<amazingpoplar@gmail.com>
