@@ -1,4 +1,4 @@
-(* ::Package:: *)
+
 
 (* Paclet Info File *)
 
