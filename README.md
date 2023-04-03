@@ -19,6 +19,12 @@ For example, if your notebook is under same directory with Tzor package.
 Once[Get[NotebookDirectory[] <> "tzor/tzor.m"]]
 ```
 Or you can put fold tzor in your Mathematica ```$UserBaseDirectory``` of Mathematica. If you don't know where, run ```$UserBaseDirectory``` in any notebook. Generally  ```C:\Users\usrname\AppData\Roaming\Mathematica\Applications``` for Windows and ```/home/username/.Mathmatica/Applicatons``` for Ubuntu. 
+Or use command automatically install.
+```
+Import["https://github.com/amapoplar/Tzor/raw/main/Install.m"]
+InstallTzor[]
+```
+
 And use command:
 
 ```Mathematica
