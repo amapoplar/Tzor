@@ -50,6 +50,7 @@ $UserBaseDirectory <>
    CopyDirectory[
     FileNameJoin[{$UserDocumentsDirectory, "Tzor-main/tzor"}], 
     FileNameJoin[{$UserBaseDirectory, "Applications/tzor"}]]];
+  RebuildPacletData[];
   Get["tzor`"];
   PrintTemporary[
    "Deleting files under" <> $UserDocumentsDirectory <> "..."];
