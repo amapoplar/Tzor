@@ -1,0 +1,188 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      6172,        180]
+NotebookOptionsPosition[      5016,        151]
+NotebookOutlinePosition[      5470,        169]
+CellTagsIndexPosition[      5427,        166]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Once", "[", 
+   RowBox[{"Get", "[", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<tzor/tzor.m\>\""}], 
+    "]"}], "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.8891857013648963`*^9, 3.8891857225191507`*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"94c2f358-b2c4-45e9-b0ba-8224109fd940"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\" Tz\[OAcute]r for \"\>", "\[InvisibleSpace]", 
+   StyleBox["\<\"T\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", "\<\"heori\"\>", 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\"z\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", "\<\"ed package \"\>",
+    "\[InvisibleSpace]", 
+   StyleBox["\<\"o\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", "\<\"f sum \"\>", 
+   "\[InvisibleSpace]", 
+   StyleBox["\<\"r\"\>",
+    StripOnInput->False,
+    LineColor->RGBColor[1, 0, 0],
+    FrontFaceColor->RGBColor[1, 0, 0],
+    BackFaceColor->RGBColor[1, 0, 0],
+    GraphicsColor->RGBColor[1, 0, 0],
+    FontColor->RGBColor[1, 0, 0]], "\[InvisibleSpace]", "\<\"ules.\"\>"}],
+  SequenceForm[" Tz\[OAcute]r for ", 
+   Style["T", 
+    RGBColor[1, 0, 0]], "heori", 
+   Style["z", 
+    RGBColor[1, 0, 0]], "ed package ", 
+   Style["o", 
+    RGBColor[1, 0, 0]], "f sum ", 
+   Style["r", 
+    RGBColor[1, 0, 0]], "ules."],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.889185723368377*^9},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"5755d58f-514e-49db-a819-\
+479a31b6f73a"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\" Get Lastest Version : \"\>", "\[InvisibleSpace]", 
+   TemplateBox[{"\"Tzor@github\"", "https://github.com/amapoplar/Tzor"},
+    "HyperlinkURL"]}],
+  SequenceForm[" Get Lastest Version : ", 
+   Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.889185723379876*^9},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"6aaac8c6-221a-4472-9ea3-\
+8bbe04648c58"],
+
+Cell[BoxData["\<\" Author : poplar, xlchen, zzchen, dklian\"\>"], "Print",
+ CellChangeTimes->{3.889185723389876*^9},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"c16204af-5aa8-4588-9c13-\
+e78622d0f80e"],
+
+Cell[BoxData["\<\" Version : alpha \"\>"], "Print",
+ CellChangeTimes->{3.889185723395876*^9},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"9b768b3f-1f89-4f6a-86b8-\
+7758fd5c74dd"],
+
+Cell[BoxData["\<\" Lastest Veresion : This Version\"\>"], "Print",
+ CellChangeTimes->{3.8891857233999166`*^9},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"f47d5270-3dcd-4fa7-a42b-\
+9322c2a0f20d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"diracDelta", "@@", 
+  RowBox[{"Join", "[", 
+   RowBox[{
+    RowBox[{"{", "1", "}"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{"ToExpression", "[", 
+        RowBox[{"\"\<x\>\"", "<>", 
+         RowBox[{"ToString", "[", "#", "]"}]}], "]"}]}], "&"}], "/@", 
+     RowBox[{"Range", "[", "5", "]"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.8891834991165857`*^9, 3.8891836022999563`*^9}, {
+  3.8891856986988955`*^9, 3.8891856993400197`*^9}, {3.8891857315278673`*^9, 
+  3.8891857347860956`*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"e3dd0027-7825-4f9d-8bd7-42f394e735f8"],
+
+Cell[BoxData[
+ FormBox[
+  TagBox[
+   RowBox[{"\[Delta]", "(", "1", "+", 
+    RowBox[{"-", "x1"}], "+", 
+    RowBox[{"-", "x2"}], "+", 
+    RowBox[{"-", "x3"}], "+", 
+    RowBox[{"-", "x4"}], "+", 
+    RowBox[{"-", "x5"}], "=", "0", ")"}],
+   DisplayForm], TraditionalForm]], "Output",
+ CellChangeTimes->{{3.8891835372462835`*^9, 3.889183543410516*^9}, {
+  3.889183589327607*^9, 3.8891836029918776`*^9}, {3.889185727961353*^9, 
+  3.8891857352496724`*^9}},
+ CellLabel->"Out[5]=",ExpressionUUID->"817b82df-8615-4a0d-80b6-02e9dd5221ff"]
+}, Open  ]]
+},
+WindowSize->{582.6, 488.4},
+WindowMargins->{{Automatic, 127.20000000000005`}, {
+  19.800000000000068`, Automatic}},
+FrontEndVersion->"13.2 for Microsoft Windows (64-bit) (2022\:5e7411\:670818\
+\:65e5)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"b5344d70-c1ff-4c0f-b514-b9c6fee5152c"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 363, 8, 64, "Input",ExpressionUUID->"94c2f358-b2c4-45e9-b0ba-8224109fd940"],
+Cell[CellGroupData[{
+Cell[968, 34, 1690, 47, 22, "Print",ExpressionUUID->"5755d58f-514e-49db-a819-479a31b6f73a"],
+Cell[2661, 83, 485, 11, 26, "Print",ExpressionUUID->"6aaac8c6-221a-4472-9ea3-8bbe04648c58"],
+Cell[3149, 96, 223, 4, 22, "Print",ExpressionUUID->"c16204af-5aa8-4588-9c13-e78622d0f80e"],
+Cell[3375, 102, 200, 4, 22, "Print",ExpressionUUID->"9b768b3f-1f89-4f6a-86b8-7758fd5c74dd"],
+Cell[3578, 108, 217, 4, 22, "Print",ExpressionUUID->"f47d5270-3dcd-4fa7-a42b-9322c2a0f20d"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3844, 118, 621, 15, 62, "Input",ExpressionUUID->"e3dd0027-7825-4f9d-8bd7-42f394e735f8"],
+Cell[4468, 135, 532, 13, 54, "Output",ExpressionUUID->"817b82df-8615-4a0d-80b6-02e9dd5221ff"]
+}, Open  ]]
+}
+]
+*)
+
