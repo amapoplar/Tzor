@@ -7,7 +7,7 @@
 Paclet[
     Name -> "tzor",
     Version -> "1.0.1",
-    WolframVersion -> "12.3+",
+    WolframVersion -> "13.0+",
     Description -> "tzor for the Mathematica Theorized package of sum rules.",
     Creator -> "poplar, xlchen, zzchen, dklian, wchen",
     Extensions -> 
