@@ -22,11 +22,11 @@ Format[structF[a_,b_,c_],TraditionalForm]:=
  DisplayForm[Superscript["\[Lambda]", RowBox[{a,b,c}]]]
 
 
-color[DE[{ferm_, ferm_}, {x_ , y_}] [ci[ci_],si[si_]]]:=ci 
+(*color[DE[{ferm_, ferm_}, {x_ , y_}] [ci[ci_],si[si_]]]:=ci 
 color[DE[{ferm_, ferm_}, {x_ , y_}] [ci[ci_]]]:=ci 
 color[a_[ci[ci_]]]:=ci
 color[a_[si[si_],ci[ci_]]]:=ci
-color[a_[si[si_]]]:= Nothing
+color[a_[si[si_]]]:= {}
 color[delta[a_,b_]]:={a,b}
 color[deltaAdj[a_,b_]]:={a,b}
 color[epsilon[a_,b_,c_]]:={a,b,c}
@@ -34,7 +34,7 @@ color[lambda[a_,b_,n_]]:={a,b,n}
 color[structF[a_,b_,c_]]:={a,b,c}
 color[Trans[a_]]:=Reverse[color[a]]
 color[a_]:=Nothing
-uncolor[con_]:=Module[{cons = con},cons /.{a_[ci[ci_]]:>a,DE[a__][ci[ci_],si[sis_]]:>DE[a][si[sis]]}]
+uncolor[con_]:=Module[{cons = con},cons /.{a_[ci[ci_]]:>a,DE[a__][ci[ci_],si[sis_]]:>DE[a][si[sis]]}]*)
 
 
 parameter[delta[a_, b_]]:={{a,3},{b,3}}

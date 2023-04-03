@@ -3,6 +3,8 @@
 (* Wolfram Language package *)
 wickContract::usage = "wickContract will give a Wick Contract of some operation"
 traceContract::usage = "traceContract will give a dot time of matrices"
+dagger::usage = "dagger will give the bar or dagger of a current."
+setIndex::usage = "setIndex will give current Lorenz index."
 
 
 TzorDeclareHeader[$TzorDirectory<>"Algebra/Matrix.m"]
@@ -17,12 +19,45 @@ SetAttributes[NM,{OneIdentity,Flat}]
 
 
 
+dagger[QField[index__]]:= {QFieldB[index],gamma[0]}
+dagger[QFieldB[index__]]:= {gamma[0],QField[index]}
+dagger[CJM]:={gamma[0],-CJM,gamma[0]}
+dagger[gamma[\[Mu]_]]:={gamma[0],gamma[\[Mu]],gamma[0]}
+dagger[gamma5]:={gamma[0],gamma5,gamma[0]}
+dagger[epsilon[a__]]:=epsilon[a]
+dagger[a_?NumberQ]:=Conjugate[a]
+dagger[a_ b_]:= dagger[a]dagger[b]
+dagger[Trans[a_]]:=Reverse[Trans/@dagger[a]]/.{Trans[gamma[0]]->gamma[0]}
+
+
+dagger[NonCommutativeMultiply[list0__]]:= Module[{list = Flatten[dagger/@Reverse[{list0}]],oddn = 0},
+oddn = CountsBy[Flatten[Level[#,-1,Heads->True]&/@list],MemberQ[{QField,QFieldB},#]&][True];
+If[oddn//OddQ, AppendTo[list,gamma[0]]];
+NonCommutativeMultiply@@(list//.{a___,gamma[0],gamma[0],b___}:>{a,b})
+]
+
+
 scalarQ[expr_]:=Head[expr]=!=(QField\[Or]QFieldB);
 quarkQ[expr_]:= (Head[expr] === QField) || (Head[expr] === QFieldB);
+quarkQ[Trans[expr_]]:= quarkQ[expr];
 gluonQ[expr_ ]:=Head[Head[expr]]===GField;
 qorgQ[expr_]:= quarkQ[expr]||gluonQ[expr];
 ProgQ[pro_]:= Head[Head[pro]]===DE;
 SetAttributes[ProgQ,Listable]
+
+
+QField[q_,a_,x_][si[{\[Alpha]_,\[Alpha]_}]]:=QField[q,a,\[Alpha],x]
+QFieldB[q_,a_,x_][si[{\[Alpha]_,\[Alpha]_}]]:=QFieldB[q,a,\[Alpha],x]
+setIndex[a_ b_]:= setIndex[a]setIndex[b]
+setIndex[a_]:=a
+setIndex[NonCommutativeMultiply[list0__]]:=Module[{list = {list0},num = Length[{list0}],flushindex = {},firstQq },
+list = list/.{Trans[QField[a__]]:>QField[a],Trans[QFieldB[a__]]:>QFieldB[a]};
+firstQq = Intersection[Level[First[list],-1,Heads->True],{QField,QFieldB}]//Length;
+If[firstQq===0,num++];
+flushindex={#,#}&/@Table[indexNew["\[FinalSigma]\[Iota]","EndQ"->True],num-1]//Flatten;
+flushindex=If[firstQq=!=0,Partition[Join[{First[#]},#,{Last[#]}]&[flushindex],2],Partition[Join[{First[#]},#,{Last[#]}]&[flushindex],2]//Rest];
+NonCommutativeMultiply@@Table[list[[i]][si[flushindex[[i]]]],{i,Length[list]}]
+]
 
 
 tempContract[]:= 1

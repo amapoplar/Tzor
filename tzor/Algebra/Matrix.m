@@ -28,13 +28,13 @@ CQ[Trans[expr_]]:=CQ[expr]
 CQ[CJM]:= False;
 CQ[a_ b_]:=CQ[a]\[And]CQ[b];
 CQ[a_+b_]:=CQ[a]\[And]CQ[b];
-CQ[a_ .b_]:=CQ[a]\[And]CQ[b];
+CQ[a_ . b_]:=CQ[a]\[And]CQ[b];
 Trans[Trans[a_]]:= a
 Trans[a_+b_]:= Trans[a]+Trans[b]
 Trans[a_ b_?CQ]:=b Trans[a]
 Trans[1]:= 1
 Trans[mass[q_]]:= mass[q]
-Trans[scalorP[q1_,q2_]]:= scalorP[q1,q2]
+Trans[scalarP[q1_,q2_]]:= scalarP[q1,q2]
 Trans[a_?NumberQ]:= a
 Track[a_?CQ b_]:= a Track[b]
 

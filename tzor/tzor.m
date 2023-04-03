@@ -9,10 +9,11 @@ BeginPackage["tzor`"]
 CurrentValue[$FrontEndSession, {CommonDefaultFormatTypes, "Output"}] = TraditionalForm
 Print[" Tz\[OAcute]r for ",Style["T",Red],"heori",Style["z",Red],"ed package ",Style["o",Red],"f sum ",Style["r",Red],"ules."]
 Print[" Get Lastest Version : ",Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]]
-Hyperlink["Tzor@github", "https://github.com/amapoplar/Tzor"]
-Print[" Author : poplar, xlchen, zzchen, dklian"]
-Print[" Version : alpha "]
-Print[" Lastest Veresion : This Version"]
+Print[" The ",Style[DisplayForm@ButtonBox["documentation", BaseStyle->"Link", ButtonData :> "paclet:tzor/"]]," will do something helpful during your using."]
+Print[" Author : ",Splice[Riffle[Flatten[Information[PacletFind["tzor"],"Creator"]],", "],Print],". "]
+Print[" Tz\[OAcute]r Version : ",Splice[Information[PacletFind["tzor"],"Version"],Print],". "]
+Print[" Wolfram Version need : ",Splice[Information[PacletFind["tzor"],"WolframVersion"],Print]]
+Print[" Wolfram Version : ",$Version]
 
 
 TzorDeclareHeader::usage = 
@@ -23,7 +24,6 @@ Begin["`Private`"]
 
 TzorDeclareHeader[file_, type_String:"file"] :=
 	Module[ {strm, einput, moreLines = True},
-
 		Switch[
 			type,
 			"file",
